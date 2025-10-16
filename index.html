@@ -756,19 +756,11 @@
             
             const urlToCast = deviceCapabilities.urlToCast;
             
-            if (deviceCapabilities.hasUrlToCast) {
-                // For streamlined interface, directly load the URL
-                setTimeout(() => {
-                    startUrlCastFromParameter(urlToCast);
-                }, 100);
-            } else {
-                // For full interface, pre-fill the URL input
-                const urlInput = document.getElementById('urlInput');
-                if (urlInput) {
-                    urlInput.value = urlToCast;
-                    startUrlCast();
-                }
-            }
+            // For streamlined interface, directly load the URL
+            console.log('Loading URL for casting:', urlToCast);
+            setTimeout(() => {
+                startUrlCastFromParameter(urlToCast);
+            }, 100);
         }
         
         // Display device capability info
@@ -812,38 +804,39 @@
         // URL casting specifically for parameter mode
         async function startUrlCastFromParameter(urlToCast) {
             try {
+                console.log('startUrlCastFromParameter called with:', urlToCast);
                 updateStatus('🌐 Loading URL for casting...', 'info');
                 
-                // Create and position URL cast container
-                let container = document.getElementById('urlCastContainer');
-                if (!container) {
-                    container = document.createElement('div');
-                    container.id = 'urlCastContainer';
-                    container.className = 'featured-section';
-                    container.style.display = 'block';
-                    container.style.visibility = 'visible';
-                    
-                    // Insert after status div for better positioning
-                    const statusDiv = document.getElementById('status');
-                    statusDiv.parentNode.insertBefore(container, statusDiv.nextSibling);
+                // Find the container element - it's inside the main .container div
+                const mainContainer = document.querySelector('.container');
+                const statusDiv = document.getElementById('status');
+                
+                // Create URL cast container
+                let urlContainer = document.getElementById('urlCastContainer');
+                if (!urlContainer) {
+                    urlContainer = document.createElement('div');
+                    urlContainer.id = 'urlCastContainer';
+                    urlContainer.className = 'featured-section';
                 }
                 
-                // Create streamlined URL cast preview with only Present button
-                container.innerHTML = `
+                // Create the content
+                urlContainer.innerHTML = `
                     <div style="text-align: center;">
                         <div class="featured-title">📽️ Ready to Present</div>
                         <p style="opacity: 0.9; margin-bottom: 20px; font-size: 1.1em;">
                             <strong>URL:</strong> ${urlToCast}
                         </p>
-                        <div style="position: relative; display: inline-block; max-width: 100%;">
+                        <div style="position: relative; display: inline-block; max-width: 100%; width: 100%;">
                             <iframe src="${urlToCast}" 
                                     style="width: 100%; height: 500px; border: none; border-radius: 15px; background: #fff; box-shadow: 0 8px 32px rgba(0,0,0,0.2);"
                                     title="URL Preview"
                                     allowfullscreen>
                             </iframe>
-                            <div class="video-overlay" style="top: 20px; right: 20px;">
+                            <div style="position: absolute; top: 20px; right: 20px; background: rgba(0, 0, 0, 0.8); border-radius: 10px; padding: 10px; backdrop-filter: blur(5px);">
                                 <button class="overlay-button present" onclick="presentUrlContent()" 
-                                        style="background: #4caf50; font-size: 18px; padding: 15px 25px; font-weight: bold; box-shadow: 0 4px 20px rgba(76,175,80,0.4);">
+                                        style="background: #4caf50; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(76,175,80,0.4); transition: all 0.3s ease;"
+                                        onmouseover="this.style.background='#388e3c'; this.style.transform='scale(1.05)'"
+                                        onmouseout="this.style.background='#4caf50'; this.style.transform='scale(1)'">
                                     📽️ Present to Display
                                 </button>
                             </div>
@@ -854,17 +847,26 @@
                     </div>
                 `;
                 
-                // Ensure container is visible
-                container.style.display = 'block';
-                container.style.visibility = 'visible';
+                // Make sure it's visible
+                urlContainer.style.display = 'block';
+                urlContainer.style.visibility = 'visible';
+                
+                // Insert after the status div
+                if (statusDiv && statusDiv.nextSibling) {
+                    mainContainer.insertBefore(urlContainer, statusDiv.nextSibling);
+                } else if (statusDiv) {
+                    statusDiv.parentNode.appendChild(urlContainer);
+                } else {
+                    mainContainer.appendChild(urlContainer);
+                }
                 
                 currentMethod = 'url-streamlined';
                 updateStatus(`✅ URL ready for presentation: ${urlToCast.length > 60 ? urlToCast.substring(0, 60) + '...' : urlToCast}`, 'success');
                 
-                console.log('URL cast container created and displayed');
+                console.log('URL cast container created and should be visible now');
                 
             } catch (error) {
-                console.error('Error loading URL:', error);
+                console.error('Error in startUrlCastFromParameter:', error);
                 updateStatus('Failed to load URL: ' + error.message, 'error');
             }
         }
