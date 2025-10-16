@@ -642,12 +642,17 @@
             // Update smart features message for streamlined mode
             const smartFeatures = document.getElementById('smartFeatures');
             if (smartFeatures) {
-                smartFeatures.innerHTML = `
-                    <strong>💡 URL Casting Mode:</strong><br>
-                    • <strong>Direct Presentation:</strong> Click the green Present button to cast to external displays<br>
-                    • <strong>Optimized Interface:</strong> Streamlined for URL parameter casting<br>
-                    • <strong>Best Performance:</strong> Works great with Miracast, wireless displays, and projectors
-                `;
+                let featuresHTML = '<strong>💡 URL Casting Mode:</strong><br>';
+                featuresHTML += '• <strong>Presentation API:</strong> Click Present button to cast to external displays<br>';
+                
+                if (deviceCapabilities.hasAirPlay || deviceCapabilities.isSafari) {
+                    featuresHTML += '• <strong>AirPlay:</strong> Cast to Apple TV and AirPlay-enabled devices<br>';
+                }
+                
+                featuresHTML += '• <strong>Optimized Interface:</strong> Streamlined for URL parameter casting<br>';
+                featuresHTML += '• <strong>Best Performance:</strong> Works great with Miracast, wireless displays, and projectors';
+                
+                smartFeatures.innerHTML = featuresHTML;
             }
             
             // Show device info
@@ -770,10 +775,19 @@
             if (deviceCapabilities.hasUrlToCast) {
                 // Streamlined message for URL parameter mode
                 infoText = '🎯 URL casting mode active. ';
+                
+                let availableOptions = [];
                 if (deviceCapabilities.hasPresentationAPI) {
-                    infoText += 'Presentation API available - ready to present!';
+                    availableOptions.push('Presentation API');
+                }
+                if (deviceCapabilities.hasAirPlay || deviceCapabilities.isSafari) {
+                    availableOptions.push('AirPlay');
+                }
+                
+                if (availableOptions.length > 0) {
+                    infoText += availableOptions.join(' + ') + ' available - ready to cast!';
                 } else {
-                    infoText += 'Limited presentation support in this browser.';
+                    infoText += 'Limited casting support in this browser.';
                 }
             } else {
                 // Full message for manual mode
@@ -819,30 +833,50 @@
                     urlContainer.className = 'featured-section';
                 }
                 
+                // Build buttons based on device capabilities
+                let buttonsHTML = `
+                    <button class="overlay-button present" onclick="presentUrlContent()" 
+                            style="background: #4caf50; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(76,175,80,0.4); transition: all 0.3s ease; margin: 5px;"
+                            onmouseover="this.style.background='#388e3c'; this.style.transform='scale(1.05)'"
+                            onmouseout="this.style.background='#4caf50'; this.style.transform='scale(1)'">
+                        📽️ Present to Display
+                    </button>
+                `;
+                
+                // Add AirPlay button if supported
+                if (deviceCapabilities.hasAirPlay || deviceCapabilities.isSafari) {
+                    buttonsHTML += `
+                        <button class="overlay-button airplay" onclick="airplayUrlContent()" 
+                                style="background: #ff9800; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(255,152,0,0.4); transition: all 0.3s ease; margin: 5px;"
+                                onmouseover="this.style.background='#f57c00'; this.style.transform='scale(1.05)'"
+                                onmouseout="this.style.background='#ff9800'; this.style.transform='scale(1)'">
+                            📱 AirPlay Cast
+                        </button>
+                    `;
+                }
+                
                 // Create the content
                 urlContainer.innerHTML = `
                     <div style="text-align: center;">
-                        <div class="featured-title">📽️ Ready to Present</div>
+                        <div class="featured-title">📽️ Ready to Cast</div>
                         <p style="opacity: 0.9; margin-bottom: 20px; font-size: 1.1em;">
                             <strong>URL:</strong> ${urlToCast}
                         </p>
                         <div style="position: relative; display: inline-block; max-width: 100%; width: 100%;">
-                            <iframe src="${urlToCast}" 
+                            <iframe id="castIframe" src="${urlToCast}" 
                                     style="width: 100%; height: 500px; border: none; border-radius: 15px; background: #fff; box-shadow: 0 8px 32px rgba(0,0,0,0.2);"
                                     title="URL Preview"
-                                    allowfullscreen>
+                                    allowfullscreen
+                                    allow="autoplay">
                             </iframe>
-                            <div style="position: absolute; top: 20px; right: 20px; background: rgba(0, 0, 0, 0.8); border-radius: 10px; padding: 10px; backdrop-filter: blur(5px);">
-                                <button class="overlay-button present" onclick="presentUrlContent()" 
-                                        style="background: #4caf50; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(76,175,80,0.4); transition: all 0.3s ease;"
-                                        onmouseover="this.style.background='#388e3c'; this.style.transform='scale(1.05)'"
-                                        onmouseout="this.style.background='#4caf50'; this.style.transform='scale(1)'">
-                                    📽️ Present to Display
-                                </button>
+                            <div style="position: absolute; top: 20px; right: 20px; background: rgba(0, 0, 0, 0.8); border-radius: 10px; padding: 10px; backdrop-filter: blur(5px); display: flex; flex-direction: column; gap: 8px;">
+                                ${buttonsHTML}
                             </div>
                         </div>
                         <p style="margin-top: 15px; opacity: 0.8; font-size: 0.95em;">
-                            Click the green button above to present this content to your external display or projector.
+                            ${deviceCapabilities.hasAirPlay || deviceCapabilities.isSafari ? 
+                                'Click Present for external displays or AirPlay for Apple TV/AirPlay devices.' : 
+                                'Click the green button above to present this content to your external display or projector.'}
                         </p>
                     </div>
                 `;
@@ -861,9 +895,15 @@
                 }
                 
                 currentMethod = 'url-streamlined';
-                updateStatus(`✅ URL ready for presentation: ${urlToCast.length > 60 ? urlToCast.substring(0, 60) + '...' : urlToCast}`, 'success');
                 
-                console.log('URL cast container created and should be visible now');
+                // Update status message based on available options
+                let statusMessage = `✅ URL ready for presentation`;
+                if (deviceCapabilities.hasAirPlay || deviceCapabilities.isSafari) {
+                    statusMessage += ' (Presentation API + AirPlay available)';
+                }
+                updateStatus(statusMessage, 'success');
+                
+                console.log('URL cast container created with buttons. AirPlay support:', deviceCapabilities.hasAirPlay || deviceCapabilities.isSafari);
                 
             } catch (error) {
                 console.error('Error in startUrlCastFromParameter:', error);
@@ -965,6 +1005,55 @@
                 
             } catch (error) {
                 updateStatus('URL presentation failed: ' + error.message, 'error');
+            }
+        };
+        
+        // AirPlay URL content
+        window.airplayUrlContent = async function() {
+            try {
+                // Get the iframe element
+                const iframe = document.getElementById('castIframe');
+                
+                if (!iframe) {
+                    updateStatus('❌ Cannot find content to cast', 'error');
+                    return;
+                }
+                
+                // For Safari/WebKit AirPlay
+                if (window.WebKitPlaybackTargetAvailabilityEvent) {
+                    // Create a video element for AirPlay
+                    const urlToCast = deviceCapabilities.hasUrlToCast ? 
+                        deviceCapabilities.urlToCast : 
+                        document.getElementById('urlInput').value;
+                    
+                    // Check if URL is a video
+                    const isVideo = urlToCast.match(/\.(mp4|webm|ogg|m3u8)$/i);
+                    
+                    if (isVideo) {
+                        // Direct video URL - use video element
+                        const video = document.createElement('video');
+                        video.src = urlToCast;
+                        video.controls = true;
+                        video.style.width = '100%';
+                        
+                        // Request AirPlay
+                        if (video.webkitShowPlaybackTargetPicker) {
+                            video.webkitShowPlaybackTargetPicker();
+                            updateStatus('📱 Select your AirPlay device...', 'info');
+                        } else {
+                            updateStatus('❌ AirPlay picker not available', 'error');
+                        }
+                    } else {
+                        // For web pages, inform user about AirPlay from Safari
+                        updateStatus('📱 For web pages: Use Safari\'s AirPlay icon in the video controls, or use the Presentation API button instead.', 'info');
+                    }
+                } else {
+                    updateStatus('❌ AirPlay is only available in Safari on macOS/iOS', 'error');
+                }
+                
+            } catch (error) {
+                console.error('AirPlay error:', error);
+                updateStatus('❌ AirPlay failed: ' + error.message, 'error');
             }
         };
         
