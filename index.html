@@ -228,7 +228,7 @@
         <div class="cast-methods">
             <div class="cast-method">
                 <div class="method-title">📡 Browser Native Cast</div>
-                <div class="method-description">Uses your browser's built-in casting feature. Works with any Cast-enabled device.</div>
+                <div class="method-description">Uses your browser's built-in casting. Will show cast device picker or enable cast button in video controls.</div>
                 <button id="nativeCastButton" class="cast-button native">
                     📺 Browser Cast
                 </button>
@@ -236,7 +236,7 @@
             
             <div class="cast-method">
                 <div class="method-title">🌐 Presentation API</div>
-                <div class="method-description">Web standard for presenting to external displays. Works with various devices.</div>
+                <div class="method-description">Present to secondary displays. Great for dual monitors or wireless displays like Miracast.</div>
                 <button id="presentationButton" class="cast-button presentation">
                     📽️ Present Screen
                 </button>
@@ -822,7 +822,16 @@
         document.getElementById('copyUrlButton').addEventListener('click', copyStreamUrl);
         
         // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', initializeControls);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if this is a presentation receiver
+            initializePresentationReceiver();
+            
+            // Only initialize controls if not in receiver mode
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('mode') !== 'receiver') {
+                initializeControls();
+            }
+        });
         
         // Handle page unload
         window.addEventListener('beforeunload', () => {
