@@ -222,13 +222,13 @@
         <h1>🎭 Universal Screen Cast</h1>
         
         <div id="status" class="status info">
-            🎯 Every casting method will show a full screen/window/tab selection dialog. For Browser Cast with multiple screens, expect cast device picker or look for cast button in video controls.
+            🎯 Every method shows screen/window/tab selection. Browser Cast requires manual casting from video controls. Presentation API needs second display. WebRTC creates shareable URLs.
         </div>
         
         <div class="cast-methods">
             <div class="cast-method">
                 <div class="method-title">📡 Browser Native Cast</div>
-                <div class="method-description">Uses your browser's built-in casting. Will show cast device picker or enable cast button in video controls.</div>
+                <div class="method-description">Prepares video for manual casting. You'll need to right-click video → "Cast..." or use browser menu to select devices.</div>
                 <button id="nativeCastButton" class="cast-button native">
                     📺 Browser Cast
                 </button>
@@ -236,7 +236,7 @@
             
             <div class="cast-method">
                 <div class="method-title">🌐 Presentation API</div>
-                <div class="method-description">Present to secondary displays. Great for dual monitors or wireless displays like Miracast.</div>
+                <div class="method-description">Present to connected monitors or wireless displays. Limited browser support (Chrome/Edge). Requires external display.</div>
                 <button id="presentationButton" class="cast-button presentation">
                     📽️ Present Screen
                 </button>
@@ -276,10 +276,11 @@
         </div>
         
         <div class="status info" style="margin: 20px 0; font-size: 0.9em;">
-            <strong>💡 Troubleshooting Tips:</strong><br>
-            • <strong>Browser Cast:</strong> If cast dialog doesn't appear, right-click the video preview → "Cast..." or check browser menu (⋮)<br>
-            • <strong>Presentation:</strong> Requires second monitor or wireless display (Miracast, Apple TV, etc.)<br>
-            • <strong>Multiple Screens:</strong> Select your desired screen in the capture dialog, then choose cast device
+            <strong>💡 Realistic Expectations:</strong><br>
+            • <strong>Browser Cast:</strong> No automatic cast device picker. You'll need to manually right-click the video → "Cast..." or use browser menu (⋮) → Cast<br>
+            • <strong>Presentation:</strong> Works with second monitors and some wireless displays (Miracast). Limited browser support.<br>
+            • <strong>Most Reliable:</strong> WebRTC Stream creates a shareable URL that works on any device<br>
+            • <strong>Alternative:</strong> Download method creates a video file you can transfer manually
         </div>
         
         <div class="settings-panel">
@@ -830,12 +831,12 @@
         
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            // Check if this is a presentation receiver
-            initializePresentationReceiver();
+            // Check if this is a presentation display
+            initializePresentationDisplay();
             
-            // Only initialize controls if not in receiver mode
+            // Only initialize controls if not in display mode
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('mode') !== 'receiver') {
+            if (urlParams.get('display') !== 'true') {
                 initializeControls();
             }
         });
