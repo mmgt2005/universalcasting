@@ -524,7 +524,7 @@
             </button>
         </div>
         
-        <div class="status info" style="margin: 20px 0; font-size: 0.9em;">
+        <div class="status info" style="margin: 20px 0; font-size: 0.9em;" id="smartFeatures">
             <strong>💡 Smart Features:</strong><br>
             • <strong>Auto-Detection:</strong> Only compatible casting methods are shown based on your device/browser<br>
             • <strong>URL Casting:</strong> Add ?cast=https://example.com to cast any website directly<br>
@@ -823,6 +823,15 @@
             document.querySelector('.other-methods').style.display = 'none';
             document.getElementById('floatingControls').style.display = 'none';
             document.getElementById('videoPreview').style.display = 'none';
+            
+            // Update smart features message for streamlined mode
+            const smartFeatures = document.getElementById('smartFeatures');
+            smartFeatures.innerHTML = `
+                <strong>💡 URL Casting Mode:</strong><br>
+                • <strong>Direct Presentation:</strong> Click the green Present button to cast to external displays<br>
+                • <strong>Optimized Interface:</strong> Streamlined for URL parameter casting<br>
+                • <strong>Best Performance:</strong> Works great with Miracast, wireless displays, and projectors
+            `;
             
             // Show device info
             showDeviceInfo();
@@ -1443,29 +1452,38 @@
         
         // Display device capability info
         function showDeviceInfo() {
-            let infoText = '🔍 Device detected: ';
-            
-            if (deviceCapabilities.isMobile) {
-                infoText += 'Mobile device - ';
-            }
-            
-            if (deviceCapabilities.isChrome) {
-                infoText += 'Chrome (excellent compatibility)';
-            } else if (deviceCapabilities.isSafari) {
-                infoText += 'Safari (AirPlay available)';
-            } else if (deviceCapabilities.isEdge) {
-                infoText += 'Edge (good compatibility)';
-            } else if (deviceCapabilities.isFirefox) {
-                infoText += 'Firefox (limited casting options)';
-            } else {
-                infoText += 'Unknown browser (limited compatibility)';
-            }
+            let infoText = '';
             
             if (deviceCapabilities.hasUrlToCast) {
-                infoText += ' • URL casting enabled';
+                // Streamlined message for URL parameter mode
+                infoText = '🎯 URL casting mode active. ';
+                if (deviceCapabilities.hasPresentationAPI) {
+                    infoText += 'Presentation API available - ready to present!';
+                } else {
+                    infoText += 'Limited presentation support in this browser.';
+                }
+            } else {
+                // Full message for manual mode
+                infoText = '🔍 Device detected: ';
+                
+                if (deviceCapabilities.isMobile) {
+                    infoText += 'Mobile device - ';
+                }
+                
+                if (deviceCapabilities.isChrome) {
+                    infoText += 'Chrome (excellent compatibility)';
+                } else if (deviceCapabilities.isSafari) {
+                    infoText += 'Safari (AirPlay available)';
+                } else if (deviceCapabilities.isEdge) {
+                    infoText += 'Edge (good compatibility)';
+                } else if (deviceCapabilities.isFirefox) {
+                    infoText += 'Firefox (limited casting options)';
+                } else {
+                    infoText += 'Unknown browser (limited compatibility)';
+                }
+                
+                infoText += '. URL casting works best with the Present button!';
             }
-            
-            infoText += '. URL casting works best with the Present button!';
             
             updateStatus(infoText, 'info');
         }
