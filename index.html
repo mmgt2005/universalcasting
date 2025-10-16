@@ -222,7 +222,7 @@
         <h1>🎭 Universal Screen Cast</h1>
         
         <div id="status" class="status info">
-            Choose your casting method below. Each uses different technology for maximum compatibility.
+            🎯 Every casting method will show a full screen/window/tab selection dialog. Choose any method below to start!
         </div>
         
         <div class="cast-methods">
@@ -277,18 +277,17 @@
         
         <div class="settings-panel">
             <h3>⚙️ Stream Settings</h3>
+            <p style="opacity: 0.8; margin-bottom: 15px; font-size: 0.9em;">
+                📝 <strong>Note:</strong> Every casting method will show a full selection dialog where you can choose any screen, window, or tab. These settings control quality and audio options.
+            </p>
             <div class="settings-grid">
                 <div class="setting-group">
-                    <h4>📺 Source Selection</h4>
-                    <label for="sourceType">Capture Source:</label>
-                    <select id="sourceType">
-                        <option value="screen">Entire Screen</option>
-                        <option value="window">Specific Window</option>
-                        <option value="tab">Browser Tab</option>
-                    </select>
-                    
+                    <h4>📺 Audio & Quality</h4>
                     <label>
                         <input type="checkbox" id="includeAudio" checked> Include Audio
+                    </label>
+                    <label>
+                        <input type="checkbox" id="includeSystemAudio"> System Audio (Chrome 105+)
                     </label>
                 </div>
                 
@@ -325,6 +324,7 @@
             <h3>🎮 Stream Controls</h3>
             <button id="stopStreamButton" class="control-button">⏹️ Stop Stream</button>
             <button id="pauseStreamButton" class="control-button">⏸️ Pause</button>
+            <button id="changeSourceButton" class="control-button" style="background: #2196F3;">🔄 Change Source</button>
             <button id="fullscreenButton" class="control-button">🖥️ Fullscreen</button>
         </div>
         
@@ -355,9 +355,9 @@
         // Get current settings from UI
         function getCurrentSettings() {
             const resolution = document.getElementById('resolution').value;
-            const sourceType = document.getElementById('sourceType').value;
             const frameRate = parseInt(document.getElementById('frameRate').value);
             const includeAudio = document.getElementById('includeAudio').checked;
+            const includeSystemAudio = document.getElementById('includeSystemAudio').checked;
             
             let width, height;
             switch (resolution) {
@@ -371,39 +371,105 @@
                 default: width = 1920; height = 1080;
             }
             
-            return { sourceType, width, height, frameRate, includeAudio };
+            return { width, height, frameRate, includeAudio, includeSystemAudio };
         }
         
-        // Build media constraints
+        // Build media constraints - always show full picker
         function buildMediaConstraints(settings) {
             const constraints = {
                 video: {
                     width: { ideal: settings.width, max: settings.width },
                     height: { ideal: settings.height, max: settings.height },
-                    frameRate: { ideal: settings.frameRate, max: settings.frameRate }
+                    frameRate: { ideal: settings.frameRate, max: settings.frameRate },
+                    // Always allow all display surfaces - let user choose
+                    displaySurface: ['monitor', 'window', 'browser']
                 }
             };
             
             if (settings.includeAudio) {
-                constraints.audio = true;
-            }
-            
-            if (settings.sourceType !== 'screen') {
-                constraints.video.displaySurface = settings.sourceType === 'window' ? 'window' : 'browser';
+                if (settings.includeSystemAudio) {
+                    constraints.audio = {
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        sampleRate: 48000
+                    };
+                } else {
+                    constraints.audio = true;
+                }
             }
             
             return constraints;
         }
         
-        // Capture screen with current settings
-        async function captureScreen() {
+        // Enhanced capture screen with full selection dialog
+        async function captureScreen(forceNewCapture = false) {
+            // If we already have a stream and not forcing new capture, use existing
+            if (mediaStream && !forceNewCapture) {
+                return mediaStream;
+            }
+            
+            // Stop existing stream if forcing new capture
+            if (mediaStream && forceNewCapture) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+            
             const settings = getCurrentSettings();
             const constraints = buildMediaConstraints(settings);
             
-            updateStatus(`Requesting ${settings.sourceType} capture permission...`, 'info');
+            updateStatus('📺 Choose your screen, window, or tab to share...', 'info');
             
             try {
-                mediaStream = await navigator.mediaDevices.getDisplayMedia(constraints);
+                // Always use getDisplayMedia without displaySurface constraint
+                // This ensures the full picker is shown every time
+                const baseConstraints = {
+                    video: {
+                        width: { ideal: settings.width, max: settings.width },
+                        height: { ideal: settings.height, max: settings.height },
+                        frameRate: { ideal: settings.frameRate, max: settings.frameRate }
+                        // No displaySurface constraint - shows all options
+                    }
+                };
+                
+                if (settings.includeAudio) {
+                    baseConstraints.audio = {
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        sampleRate: 48000
+                    };
+                }
+                
+                mediaStream = await navigator.mediaDevices.getDisplayMedia(baseConstraints);
+                
+                // Detect what the user actually selected
+                const videoTrack = mediaStream.getVideoTracks()[0];
+                const trackSettings = videoTrack.getSettings();
+                let sourceInfo = 'Unknown source';
+                
+                if (trackSettings.displaySurface) {
+                    switch (trackSettings.displaySurface) {
+                        case 'monitor':
+                            sourceInfo = '🖥️ Entire Screen';
+                            break;
+                        case 'window':
+                            sourceInfo = '🪟 Application Window';
+                            break;
+                        case 'browser':
+                            sourceInfo = '🌐 Browser Tab';
+                            break;
+                    }
+                } else {
+                    // Fallback detection based on dimensions
+                    if (trackSettings.width >= 1920) {
+                        sourceInfo = '🖥️ Screen/Large Window';
+                    } else if (trackSettings.width >= 1280) {
+                        sourceInfo = '🪟 Window';
+                    } else {
+                        sourceInfo = '🌐 Tab/Small Window';
+                    }
+                }
+                
+                updateStatus(`✅ Capturing: ${sourceInfo} (${trackSettings.width}x${trackSettings.height})`, 'success');
                 
                 // Show preview
                 const video = document.getElementById('previewVideo');
@@ -413,7 +479,7 @@
                 document.getElementById('controlPanel').style.display = 'block';
                 
                 // Handle stream end
-                mediaStream.getVideoTracks()[0].addEventListener('ended', () => {
+                videoTrack.addEventListener('ended', () => {
                     updateStatus('Screen capture ended by user', 'info');
                     stopStream();
                 });
@@ -652,6 +718,54 @@
             currentMethod = null;
         }
         
+        // Change source while keeping current cast active
+        async function changeSource() {
+            if (!currentMethod) {
+                updateStatus('No active cast session. Start casting first.', 'error');
+                return;
+            }
+            
+            updateStatus('🔄 Switching capture source...', 'info');
+            
+            // Capture new source
+            const newStream = await captureScreen(true); // Force new capture
+            if (!newStream) return;
+            
+            // Update the video preview with new stream
+            const video = document.getElementById('previewVideo');
+            video.srcObject = newStream;
+            
+            updateStatus(`✅ Source changed successfully! Current method: ${currentMethod}`, 'success');
+        }
+        
+        // Pause/Resume stream
+        function togglePause() {
+            if (!mediaStream) return;
+            
+            const videoTrack = mediaStream.getVideoTracks()[0];
+            if (videoTrack) {
+                videoTrack.enabled = !videoTrack.enabled;
+                const button = document.getElementById('pauseStreamButton');
+                if (videoTrack.enabled) {
+                    button.textContent = '⏸️ Pause';
+                    updateStatus('Stream resumed', 'success');
+                } else {
+                    button.textContent = '▶️ Resume';
+                    updateStatus('Stream paused', 'info');
+                }
+            }
+        }
+        
+        // Fullscreen preview
+        function toggleFullscreen() {
+            const video = document.getElementById('previewVideo');
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen();
+            }
+        }
+        
         // Copy WebRTC URL
         function copyStreamUrl() {
             const url = document.getElementById('streamUrl').textContent;
@@ -680,6 +794,13 @@
                 document.getElementById('frameRateValue').textContent = e.target.value + ' fps';
             });
             
+            // System audio warning
+            document.getElementById('includeSystemAudio').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    updateStatus('System audio requires Chrome 105+ and may need additional permissions', 'info');
+                }
+            });
+            
             // Check AirPlay support
             if (window.WebKitPlaybackTargetAvailabilityEvent) {
                 document.getElementById('airplayButton').disabled = false;
@@ -695,6 +816,9 @@
         document.getElementById('downloadButton').addEventListener('click', startDownload);
         
         document.getElementById('stopStreamButton').addEventListener('click', stopStream);
+        document.getElementById('pauseStreamButton').addEventListener('click', togglePause);
+        document.getElementById('changeSourceButton').addEventListener('click', changeSource);
+        document.getElementById('fullscreenButton').addEventListener('click', toggleFullscreen);
         document.getElementById('copyUrlButton').addEventListener('click', copyStreamUrl);
         
         // Initialize when page loads
