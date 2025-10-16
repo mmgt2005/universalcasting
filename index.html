@@ -142,22 +142,6 @@
             justify-content: center;
         }
         
-        .overlay-button.present {
-            background: #4caf50;
-            font-size: 14px;
-            padding: 10px 16px;
-        }
-        
-        .overlay-button.present:hover {
-            background: #388e3c;
-        }
-        
-        .overlay-button.cast {
-            background: #ff5722;
-            font-size: 12px;
-            padding: 8px 12px;
-        }
-        
         .cast-button:hover {
             background: #3367d6;
             transform: translateY(-2px);
@@ -333,6 +317,8 @@
         
         .overlay-button.cast {
             background: #ff5722;
+            font-size: 12px;
+            padding: 8px 12px;
         }
         
         .overlay-button.cast:hover {
@@ -340,11 +326,13 @@
         }
         
         .overlay-button.present {
-            background: #9c27b0;
+            background: #4caf50;
+            font-size: 14px;
+            padding: 10px 16px;
         }
         
         .overlay-button.present:hover {
-            background: #7b1fa2;
+            background: #388e3c;
         }
         
         .floating-controls {
@@ -384,60 +372,41 @@
             🔄 Analyzing device capabilities and compatibility...
         </div>
         
-        <div class="cast-methods">
-            <div class="cast-method">
-                <div class="method-title">📡 Browser Native Cast</div>
-                <div class="method-description">Prepares video for manual casting. You'll need to right-click video → "Cast..." or use browser menu to select devices.</div>
-                <button id="nativeCastButton" class="cast-button native">
-                    📺 Browser Cast
+        <!-- Featured URL Casting Section -->
+        <div class="featured-section">
+            <div class="featured-title">🌐 Featured: URL Casting</div>
+            <p style="text-align: center; opacity: 0.9; margin-bottom: 20px;">
+                Cast any website directly to your display. Works best with the Present button!
+            </p>
+            
+            <div class="url-input-container">
+                <input type="text" id="urlInput" class="url-input" placeholder="Enter URL to cast (e.g., https://youtube.com/watch?v=abc123)" />
+                <button id="urlCastButton" class="url-cast-button">
+                    🚀 Load URL
                 </button>
             </div>
             
-            <div class="cast-method">
-                <div class="method-title">🌐 Presentation API</div>
-                <div class="method-description">Present to connected monitors or wireless displays. Limited browser support (Chrome/Edge). Requires external display.</div>
-                <button id="presentationButton" class="cast-button presentation">
-                    📽️ Present Screen
-                </button>
-            </div>
-            
-            <div class="cast-method">
-                <div class="method-title">🍎 AirPlay (Safari)</div>
-                <div class="method-description">Native AirPlay support for Safari users. Works with Apple TV and AirPlay devices.</div>
-                <button id="airplayButton" class="cast-button airplay" disabled>
-                    📱 AirPlay Cast
-                </button>
-            </div>
-            
-            <div class="cast-method">
-                <div class="method-title">📱 Google Cast SDK</div>
-                <div class="method-description">Traditional Chromecast method. Requires Cast devices on network.</div>
-                <button id="googleCastButton" class="cast-button">
-                    📡 Google Cast
-                </button>
-            </div>
-            
-            <div class="cast-method">
-                <div class="method-title">💻 Download Stream</div>
-                <div class="method-description">Record your screen and download as video file for manual transfer.</div>
-                <button id="downloadButton" class="cast-button" style="background: #607d8b;">
-                    💾 Download Video
-                </button>
-            </div>
-            
-            <div class="cast-method">
-                <div class="method-title">🎮 Quick Capture</div>
-                <div class="method-description">Just capture your screen and use overlay controls to choose casting method.</div>
-                <button id="quickCaptureButton" class="cast-button" style="background: #4caf50;">
-                    📹 Quick Capture
-                </button>
+            <div id="urlCastContainer" style="display: none; margin-top: 20px;">
+                <!-- URL preview will be inserted here -->
             </div>
         </div>
         
-        <div class="settings-panel">
+        <!-- Stream Controls Section -->
+        <div id="controlPanel" class="control-panel" style="display: none;">
+            <h3>🎮 Stream Controls</h3>
+            <button id="stopStreamButton" class="control-button">⏹️ Stop</button>
+            <button id="pauseStreamButton" class="control-button">⏸️ Pause</button>
+            <button id="changeSourceButton" class="control-button" style="background: #2196F3;">🔄 Change Source</button>
+            <button id="fullscreenButton" class="control-button">🖥️ Fullscreen</button>
+        </div>
+        
+        <!-- URL Cast Container (will be dynamically inserted) -->
+        
+        <!-- Stream Settings -->
+        <div class="settings-panel" id="settingsPanel">
             <h3>⚙️ Stream Settings</h3>
             <p style="opacity: 0.8; margin-bottom: 15px; font-size: 0.9em;">
-                📝 <strong>Note:</strong> Every casting method will show a full selection dialog where you can choose any screen, window, or tab. These settings control quality and audio options.
+                📝 <strong>Note:</strong> These settings apply to screen capture methods. URL casting uses the original quality.
             </p>
             <div class="settings-grid">
                 <div class="setting-group">
@@ -479,14 +448,7 @@
             </div>
         </div>
         
-        <div id="controlPanel" class="control-panel">
-            <h3>🎮 Stream Controls</h3>
-            <button id="stopStreamButton" class="control-button">⏹️ Stop Stream</button>
-            <button id="pauseStreamButton" class="control-button">⏸️ Pause</button>
-            <button id="changeSourceButton" class="control-button" style="background: #2196F3;">🔄 Change Source</button>
-            <button id="fullscreenButton" class="control-button">🖥️ Fullscreen</button>
-        </div>
-        
+        <!-- Video Preview Section (for screen capture methods) -->
         <div id="videoPreview" class="video-preview">
             <h4>📺 Stream Preview</h4>
             <div style="position: relative; display: inline-block;">
@@ -505,6 +467,65 @@
             </div>
         </div>
         
+        <!-- Other Casting Methods -->
+        <div class="other-methods">
+            <h3>🔧 Other Casting Methods</h3>
+            <p style="text-align: center; opacity: 0.8; font-size: 0.9em; margin-bottom: 15px;">
+                Additional methods for screen capture and casting (compatibility varies by device)
+            </p>
+            
+            <div class="cast-methods" id="otherCastMethods">
+                <div class="cast-method">
+                    <div class="method-title">📡 Browser Native Cast</div>
+                    <div class="method-description">Prepares video for manual casting. Right-click video → "Cast..."</div>
+                    <button id="nativeCastButton" class="cast-button native">
+                        📺 Browser Cast
+                    </button>
+                </div>
+                
+                <div class="cast-method">
+                    <div class="method-title">🌐 Presentation API</div>
+                    <div class="method-description">Present to connected monitors or wireless displays.</div>
+                    <button id="presentationButton" class="cast-button presentation">
+                        📽️ Present Screen
+                    </button>
+                </div>
+                
+                <div class="cast-method">
+                    <div class="method-title">🍎 AirPlay (Safari)</div>
+                    <div class="method-description">Native AirPlay support for Safari users.</div>
+                    <button id="airplayButton" class="cast-button airplay" disabled>
+                        📱 AirPlay Cast
+                    </button>
+                </div>
+                
+                <div class="cast-method">
+                    <div class="method-title">📱 Google Cast SDK</div>
+                    <div class="method-description">Traditional Chromecast method.</div>
+                    <button id="googleCastButton" class="cast-button">
+                        📡 Google Cast
+                    </button>
+                </div>
+                
+                <div class="cast-method">
+                    <div class="method-title">💻 Download Stream</div>
+                    <div class="method-description">Record and download as video file.</div>
+                    <button id="downloadButton" class="cast-button" style="background: #607d8b;">
+                        💾 Download Video
+                    </button>
+                </div>
+                
+                <div class="cast-method">
+                    <div class="method-title">🎮 Quick Capture</div>
+                    <div class="method-description">Capture screen with overlay controls.</div>
+                    <button id="quickCaptureButton" class="cast-button" style="background: #4caf50;">
+                        📹 Quick Capture
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Floating Controls -->
         <div id="floatingControls" class="floating-controls">
             <h4>🎯 Quick Cast Controls</h4>
             <button id="floatingCastButton" class="overlay-button cast">
@@ -579,228 +600,6 @@
             return capabilities;
         }
         
-        // Hide incompatible casting methods
-        function hideIncompatibleMethods() {
-            const methods = document.querySelectorAll('.cast-method');
-            
-            methods.forEach(method => {
-                const button = method.querySelector('button');
-                const methodId = button.id;
-                let shouldHide = false;
-                let reason = '';
-                
-                switch(methodId) {
-                    case 'nativeCastButton':
-                        // Browser cast works best on Chrome/Edge
-                        if (!deviceCapabilities.isChrome && !deviceCapabilities.isEdge) {
-                            shouldHide = true;
-                            reason = 'Browser casting works best in Chrome or Edge';
-                        }
-                        break;
-                        
-                    case 'presentationButton':
-                        // Presentation API mainly Chrome/Edge, requires external display
-                        if (!deviceCapabilities.hasPresentationAPI || deviceCapabilities.isMobile) {
-                            shouldHide = true;
-                            reason = 'Presentation API not supported or no external display available';
-                        }
-                        break;
-                        
-                    case 'airplayButton':
-                        // AirPlay only works on Safari/iOS
-                        if (!deviceCapabilities.hasAirPlay && !deviceCapabilities.isIOS) {
-                            shouldHide = true;
-                            reason = 'AirPlay only available in Safari on macOS/iOS';
-                        }
-                        break;
-                        
-                    case 'googleCastButton':
-                        // Google Cast works best on Chrome
-                        if (!deviceCapabilities.isChrome || deviceCapabilities.isMobile) {
-                            shouldHide = true;
-                            reason = 'Google Cast SDK works best in Chrome on desktop';
-                        }
-                        break;
-                        
-                    case 'downloadButton':
-                        // MediaRecorder widely supported but check anyway
-                        if (!deviceCapabilities.hasMediaRecorder) {
-                            shouldHide = true;
-                            reason = 'Recording not supported in this browser';
-                        }
-                        break;
-                        
-                    case 'quickCaptureButton':
-                        // Quick capture needs screen sharing
-                        if (!deviceCapabilities.hasGetDisplayMedia) {
-                            shouldHide = true;
-                            reason = 'Screen capture not supported';
-                        }
-                        break;
-                        
-                    case 'urlCastButton':
-                        // URL cast always available if we have a URL
-                        break;
-                }
-                
-                // Check if screen capture is available
-                if ((methodId === 'nativeCastButton' || methodId === 'presentationButton' || methodId === 'quickCaptureButton') &&
-                    (!deviceCapabilities.hasGetDisplayMedia || (!deviceCapabilities.isHTTPS && !deviceCapabilities.isLocalhost))) {
-                    shouldHide = true;
-                    reason = 'Screen capture requires HTTPS or localhost';
-                }
-                
-                if (shouldHide) {
-                    method.style.display = 'none';
-                    console.log(`Hidden ${methodId}: ${reason}`);
-                } else {
-                    method.style.display = 'block';
-                }
-            });
-        }
-        
-        // Add URL casting method if URL parameter exists
-        function addUrlCastingMethod() {
-            if (!deviceCapabilities.hasUrlToCast) return;
-            
-            const urlToCast = deviceCapabilities.urlToCast;
-            const methodsContainer = document.querySelector('.cast-methods');
-            
-            const urlCastMethod = document.createElement('div');
-            urlCastMethod.className = 'cast-method';
-            urlCastMethod.innerHTML = `
-                <div class="method-title">🔗 URL Cast</div>
-                <div class="method-description">Cast the specified URL: ${urlToCast.length > 50 ? urlToCast.substring(0, 50) + '...' : urlToCast}</div>
-                <button id="urlCastButton" class="cast-button" style="background: #607d8b;">
-                    🌐 Cast URL
-                </button>
-            `;
-            
-            // Insert as first option
-            methodsContainer.insertBefore(urlCastMethod, methodsContainer.firstChild);
-            
-            // Add event listener
-            document.getElementById('urlCastButton').addEventListener('click', startUrlCast);
-        }
-        
-        // Display device capability info
-        function showDeviceInfo() {
-            let infoText = '🔍 Device detected: ';
-            
-            if (deviceCapabilities.isMobile) {
-                infoText += 'Mobile device - ';
-            }
-            
-            if (deviceCapabilities.isChrome) {
-                infoText += 'Chrome (excellent compatibility)';
-            } else if (deviceCapabilities.isSafari) {
-                infoText += 'Safari (AirPlay available)';
-            } else if (deviceCapabilities.isEdge) {
-                infoText += 'Edge (good compatibility)';
-            } else if (deviceCapabilities.isFirefox) {
-                infoText += 'Firefox (limited casting options)';
-            } else {
-                infoText += 'Unknown browser (limited compatibility)';
-            }
-            
-            if (deviceCapabilities.hasUrlToCast) {
-                infoText += ' • URL casting enabled';
-            }
-            
-            updateStatus(infoText, 'info');
-        }
-        
-        // URL Casting Method
-        async function startUrlCast() {
-            const urlToCast = deviceCapabilities.urlToCast;
-            if (!urlToCast) {
-                updateStatus('No URL specified for casting', 'error');
-                return;
-            }
-            
-            try {
-                updateStatus('🌐 Loading URL for casting...', 'info');
-                
-                // Create iframe to display the URL
-                const iframe = document.createElement('iframe');
-                iframe.src = urlToCast;
-                iframe.style.width = '100%';
-                iframe.style.height = '400px';
-                iframe.style.border = 'none';
-                iframe.style.borderRadius = '10px';
-                
-                // Create container for URL cast
-                const urlContainer = document.createElement('div');
-                urlContainer.id = 'urlCastContainer';
-                urlContainer.style.margin = '20px 0';
-                urlContainer.style.textAlign = 'center';
-                urlContainer.innerHTML = `
-                    <h4>🔗 URL Cast Preview</h4>
-                    <div style="position: relative; display: inline-block;">
-                        ${iframe.outerHTML}
-                        <div class="video-overlay">
-                            <button class="overlay-button cast" onclick="castUrlContent()" title="Cast this URL">
-                                📱 Cast
-                            </button>
-                            <button class="overlay-button present" onclick="presentUrlContent()" title="Present to display">
-                                📽️ Present
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                // Insert after video preview
-                const videoPreview = document.getElementById('videoPreview');
-                videoPreview.parentNode.insertBefore(urlContainer, videoPreview.nextSibling);
-                
-                currentMethod = 'url';
-                updateStatus(`✅ URL loaded: ${urlToCast}. Use overlay controls to cast.`, 'success');
-                
-                // Show control panel
-                document.getElementById('controlPanel').style.display = 'block';
-                
-            } catch (error) {
-                updateStatus('Failed to load URL: ' + error.message, 'error');
-            }
-        }
-        
-        // Cast URL content
-        window.castUrlContent = function() {
-            if (deviceCapabilities.isChrome || deviceCapabilities.isEdge) {
-                updateStatus('📱 Right-click the URL content and select "Cast..." to cast to your devices.', 'info');
-            } else {
-                updateStatus('URL casting works best in Chrome or Edge browsers.', 'error');
-            }
-        };
-        
-        // Present URL content
-        window.presentUrlContent = async function() {
-            if (!deviceCapabilities.hasPresentationAPI) {
-                updateStatus('Presentation API not supported in this browser', 'error');
-                return;
-            }
-            
-            try {
-                const urlToCast = deviceCapabilities.urlToCast;
-                presentationRequest = new PresentationRequest([urlToCast]);
-                
-                updateStatus('🔍 Looking for presentation displays...', 'info');
-                presentationConnection = await presentationRequest.start();
-                
-                presentationConnection.addEventListener('connect', () => {
-                    updateStatus('✅ URL being presented on external display!', 'success');
-                    currentMethod = 'url-presentation';
-                });
-                
-                presentationConnection.addEventListener('close', () => {
-                    updateStatus('URL presentation closed', 'info');
-                });
-                
-            } catch (error) {
-                updateStatus('URL presentation failed: ' + error.message, 'error');
-            }
-        };
-        
         // Enhanced initialization with parameter-based UI
         function initializeApp() {
             // Detect capabilities first
@@ -861,6 +660,288 @@
                 updateStatus('⚠️ HTTPS required for screen capture. Use https:// or localhost, or add ?cast=URL for URL casting.', 'error');
             }
         }
+        
+        // Hide incompatible casting methods - updated for new structure
+        function hideIncompatibleMethods() {
+            const methods = document.querySelectorAll('#otherCastMethods .cast-method');
+            
+            methods.forEach(method => {
+                const button = method.querySelector('button');
+                const methodId = button.id;
+                let shouldHide = false;
+                let reason = '';
+                
+                switch(methodId) {
+                    case 'nativeCastButton':
+                        if (!deviceCapabilities.isChrome && !deviceCapabilities.isEdge) {
+                            shouldHide = true;
+                            reason = 'Browser casting works best in Chrome or Edge';
+                        }
+                        break;
+                        
+                    case 'presentationButton':
+                        if (!deviceCapabilities.hasPresentationAPI || deviceCapabilities.isMobile) {
+                            shouldHide = true;
+                            reason = 'Presentation API not supported or no external display available';
+                        }
+                        break;
+                        
+                    case 'airplayButton':
+                        if (!deviceCapabilities.hasAirPlay && !deviceCapabilities.isIOS) {
+                            shouldHide = true;
+                            reason = 'AirPlay only available in Safari on macOS/iOS';
+                        }
+                        break;
+                        
+                    case 'googleCastButton':
+                        if (!deviceCapabilities.isChrome || deviceCapabilities.isMobile) {
+                            shouldHide = true;
+                            reason = 'Google Cast SDK works best in Chrome on desktop';
+                        }
+                        break;
+                        
+                    case 'downloadButton':
+                        if (!deviceCapabilities.hasMediaRecorder) {
+                            shouldHide = true;
+                            reason = 'Recording not supported in this browser';
+                        }
+                        break;
+                        
+                    case 'quickCaptureButton':
+                        if (!deviceCapabilities.hasGetDisplayMedia) {
+                            shouldHide = true;
+                            reason = 'Screen capture not supported';
+                        }
+                        break;
+                }
+                
+                // Check if screen capture is available for relevant methods
+                if ((methodId === 'nativeCastButton' || methodId === 'presentationButton' || methodId === 'quickCaptureButton') &&
+                    (!deviceCapabilities.hasGetDisplayMedia || (!deviceCapabilities.isHTTPS && !deviceCapabilities.isLocalhost))) {
+                    shouldHide = true;
+                    reason = 'Screen capture requires HTTPS or localhost';
+                }
+                
+                if (shouldHide) {
+                    method.style.display = 'none';
+                    console.log(`Hidden ${methodId}: ${reason}`);
+                } else {
+                    method.style.display = 'block';
+                }
+            });
+        }
+        
+        // Add URL casting method if URL parameter exists
+        function addUrlCastingMethod() {
+            if (!deviceCapabilities.hasUrlToCast) return;
+            
+            const urlToCast = deviceCapabilities.urlToCast;
+            
+            if (deviceCapabilities.hasUrlToCast) {
+                // For streamlined interface, directly load the URL
+                setTimeout(() => {
+                    startUrlCastFromParameter(urlToCast);
+                }, 100);
+            } else {
+                // For full interface, pre-fill the URL input
+                const urlInput = document.getElementById('urlInput');
+                if (urlInput) {
+                    urlInput.value = urlToCast;
+                    startUrlCast();
+                }
+            }
+        }
+        
+        // Display device capability info
+        function showDeviceInfo() {
+            let infoText = '';
+            
+            if (deviceCapabilities.hasUrlToCast) {
+                // Streamlined message for URL parameter mode
+                infoText = '🎯 URL casting mode active. ';
+                if (deviceCapabilities.hasPresentationAPI) {
+                    infoText += 'Presentation API available - ready to present!';
+                } else {
+                    infoText += 'Limited presentation support in this browser.';
+                }
+            } else {
+                // Full message for manual mode
+                infoText = '🔍 Device detected: ';
+                
+                if (deviceCapabilities.isMobile) {
+                    infoText += 'Mobile device - ';
+                }
+                
+                if (deviceCapabilities.isChrome) {
+                    infoText += 'Chrome (excellent compatibility)';
+                } else if (deviceCapabilities.isSafari) {
+                    infoText += 'Safari (AirPlay available)';
+                } else if (deviceCapabilities.isEdge) {
+                    infoText += 'Edge (good compatibility)';
+                } else if (deviceCapabilities.isFirefox) {
+                    infoText += 'Firefox (limited casting options)';
+                } else {
+                    infoText += 'Unknown browser (limited compatibility)';
+                }
+                
+                infoText += '. URL casting works best with the Present button!';
+            }
+            
+            updateStatus(infoText, 'info');
+        }
+        
+        // URL casting specifically for parameter mode
+        async function startUrlCastFromParameter(urlToCast) {
+            try {
+                updateStatus('🌐 Loading URL for casting...', 'info');
+                
+                // Create and position URL cast container
+                let container = document.getElementById('urlCastContainer');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.id = 'urlCastContainer';
+                    container.className = 'featured-section';
+                    
+                    // Insert after control panel
+                    const controlPanel = document.getElementById('controlPanel');
+                    controlPanel.parentNode.insertBefore(container, controlPanel.nextSibling);
+                }
+                
+                // Create streamlined URL cast preview with only Present button
+                container.innerHTML = `
+                    <div style="text-align: center;">
+                        <div class="featured-title">📽️ Ready to Present</div>
+                        <p style="opacity: 0.9; margin-bottom: 20px; font-size: 1.1em;">
+                            <strong>URL:</strong> ${urlToCast}
+                        </p>
+                        <div style="position: relative; display: inline-block; max-width: 100%;">
+                            <iframe src="${urlToCast}" 
+                                    style="width: 100%; height: 500px; border: none; border-radius: 15px; background: #fff; box-shadow: 0 8px 32px rgba(0,0,0,0.2);"
+                                    title="URL Preview">
+                            </iframe>
+                            <div class="video-overlay" style="top: 20px; right: 20px;">
+                                <button class="overlay-button present" onclick="presentUrlContent()" 
+                                        style="background: #4caf50; font-size: 18px; padding: 15px 25px; font-weight: bold; box-shadow: 0 4px 20px rgba(76,175,80,0.4);">
+                                    📽️ Present to Display
+                                </button>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px; opacity: 0.8; font-size: 0.95em;">
+                            Click the green button above to present this content to your external display or projector.
+                        </p>
+                    </div>
+                `;
+                
+                container.style.display = 'block';
+                
+                // Move settings panel after URL cast container
+                const settingsPanel = document.getElementById('settingsPanel');
+                container.parentNode.insertBefore(settingsPanel, container.nextSibling);
+                
+                currentMethod = 'url-streamlined';
+                updateStatus(`✅ URL ready for presentation: ${urlToCast.length > 60 ? urlToCast.substring(0, 60) + '...' : urlToCast}`, 'success');
+                
+            } catch (error) {
+                updateStatus('Failed to load URL: ' + error.message, 'error');
+            }
+        }
+        
+        // Enhanced URL Casting Method
+        async function startUrlCast() {
+            let urlToCast = document.getElementById('urlInput').value.trim();
+            
+            if (!urlToCast) {
+                updateStatus('Please enter a URL to cast', 'error');
+                return;
+            }
+            
+            // Add https:// if no protocol specified
+            if (!urlToCast.startsWith('http://') && !urlToCast.startsWith('https://')) {
+                urlToCast = 'https://' + urlToCast;
+                document.getElementById('urlInput').value = urlToCast;
+            }
+            
+            try {
+                updateStatus('🌐 Loading URL for casting...', 'info');
+                
+                const container = document.getElementById('urlCastContainer');
+                
+                // Create enhanced URL cast preview
+                container.innerHTML = `
+                    <div style="text-align: center;">
+                        <h4>🔗 URL Cast Preview</h4>
+                        <p style="opacity: 0.9; margin-bottom: 15px;">
+                            <strong>✨ Tip:</strong> The <span style="background: #4caf50; padding: 2px 8px; border-radius: 12px;">📽️ Present</span> button works best for casting!
+                        </p>
+                        <div style="position: relative; display: inline-block; max-width: 100%;">
+                            <iframe src="${urlToCast}" 
+                                    style="width: 100%; height: 400px; border: none; border-radius: 10px; background: #fff;"
+                                    title="URL Preview">
+                            </iframe>
+                            <div class="video-overlay" style="top: 15px; right: 15px;">
+                                <button class="overlay-button present" onclick="presentUrlContent()" title="Present to display (Recommended!)" 
+                                        style="background: #4caf50; font-size: 16px; padding: 12px 20px; font-weight: bold;">
+                                    📽️ Present
+                                </button>
+                                <button class="overlay-button cast" onclick="castUrlContent()" title="Cast this URL">
+                                    📱 Cast
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.style.display = 'block';
+                currentMethod = 'url';
+                updateStatus(`✅ URL loaded: ${urlToCast}. Click the green Present button for best results!`, 'success');
+                
+                // Show control panel
+                document.getElementById('controlPanel').style.display = 'block';
+                
+            } catch (error) {
+                updateStatus('Failed to load URL: ' + error.message, 'error');
+            }
+        }
+        
+        // Cast URL content
+        window.castUrlContent = function() {
+            if (deviceCapabilities.isChrome || deviceCapabilities.isEdge) {
+                updateStatus('📱 Right-click the URL content and select "Cast..." to cast to your devices.', 'info');
+            } else {
+                updateStatus('URL casting works best in Chrome or Edge browsers.', 'error');
+            }
+        };
+        
+        // Present URL content
+        window.presentUrlContent = async function() {
+            if (!deviceCapabilities.hasPresentationAPI) {
+                updateStatus('Presentation API not supported in this browser', 'error');
+                return;
+            }
+            
+            try {
+                const urlToCast = deviceCapabilities.hasUrlToCast ? 
+                    deviceCapabilities.urlToCast : 
+                    document.getElementById('urlInput').value;
+                    
+                presentationRequest = new PresentationRequest([urlToCast]);
+                
+                updateStatus('🔍 Looking for presentation displays...', 'info');
+                presentationConnection = await presentationRequest.start();
+                
+                presentationConnection.addEventListener('connect', () => {
+                    updateStatus('✅ URL being presented on external display!', 'success');
+                    currentMethod = 'url-presentation';
+                });
+                
+                presentationConnection.addEventListener('close', () => {
+                    updateStatus('URL presentation closed', 'info');
+                });
+                
+            } catch (error) {
+                updateStatus('URL presentation failed: ' + error.message, 'error');
+            }
+        };
         
         // Get current settings from UI
         function getCurrentSettings() {
@@ -1403,10 +1484,10 @@
             document.getElementById('floatingControls').style.display = 'none';
             document.getElementById('videoOverlay').style.display = 'none';
             
-            // Remove URL cast container if it exists
+            // Hide URL cast container
             const urlContainer = document.getElementById('urlCastContainer');
             if (urlContainer) {
-                urlContainer.remove();
+                urlContainer.style.display = 'none';
             }
             
             updateStatus('Stream stopped', 'info');
@@ -1448,44 +1529,6 @@
             } else {
                 document.getElementById('floatingAirplayButton').disabled = true;
             }
-        }
-        
-        // Display device capability info
-        function showDeviceInfo() {
-            let infoText = '';
-            
-            if (deviceCapabilities.hasUrlToCast) {
-                // Streamlined message for URL parameter mode
-                infoText = '🎯 URL casting mode active. ';
-                if (deviceCapabilities.hasPresentationAPI) {
-                    infoText += 'Presentation API available - ready to present!';
-                } else {
-                    infoText += 'Limited presentation support in this browser.';
-                }
-            } else {
-                // Full message for manual mode
-                infoText = '🔍 Device detected: ';
-                
-                if (deviceCapabilities.isMobile) {
-                    infoText += 'Mobile device - ';
-                }
-                
-                if (deviceCapabilities.isChrome) {
-                    infoText += 'Chrome (excellent compatibility)';
-                } else if (deviceCapabilities.isSafari) {
-                    infoText += 'Safari (AirPlay available)';
-                } else if (deviceCapabilities.isEdge) {
-                    infoText += 'Edge (good compatibility)';
-                } else if (deviceCapabilities.isFirefox) {
-                    infoText += 'Firefox (limited casting options)';
-                } else {
-                    infoText += 'Unknown browser (limited compatibility)';
-                }
-                
-                infoText += '. URL casting works best with the Present button!';
-            }
-            
-            updateStatus(infoText, 'info');
         }
         
         // Event listeners - updated for new structure
