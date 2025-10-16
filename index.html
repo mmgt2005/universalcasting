@@ -801,12 +801,42 @@
             }
         };
         
-        // Enhanced initialization
+        // Enhanced initialization with parameter-based UI
         function initializeApp() {
             // Detect capabilities first
             deviceCapabilities = detectDeviceCapabilities();
             
-            // Add URL casting if URL parameter exists
+            // Check if we have a cast parameter
+            if (deviceCapabilities.hasUrlToCast) {
+                // Streamlined interface for URL parameter
+                initializeStreamlinedInterface();
+            } else {
+                // Full interface for manual use
+                initializeFullInterface();
+            }
+        }
+        
+        // Streamlined interface when cast parameter is present
+        function initializeStreamlinedInterface() {
+            // Hide elements we don't need
+            document.querySelector('.featured-section').style.display = 'none';
+            document.querySelector('.other-methods').style.display = 'none';
+            document.getElementById('floatingControls').style.display = 'none';
+            document.getElementById('videoPreview').style.display = 'none';
+            
+            // Show device info
+            showDeviceInfo();
+            
+            // Auto-load the URL from parameter
+            addUrlCastingMethod();
+            
+            // Show stream controls (will be visible once URL loads)
+            document.getElementById('controlPanel').style.display = 'block';
+        }
+        
+        // Full interface for manual use
+        function initializeFullInterface() {
+            // Add URL casting if URL parameter exists (shouldn't happen in this case)
             addUrlCastingMethod();
             
             // Hide incompatible methods
