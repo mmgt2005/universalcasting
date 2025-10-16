@@ -31,29 +31,97 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
         
-        .cast-methods {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+        .featured-section {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .featured-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .url-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .url-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .url-cast-button {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .url-cast-button:hover {
+            background: #388e3c;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+        
+        .other-methods {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
             margin: 30px 0;
         }
         
+        .other-methods h3 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            text-align: center;
+            opacity: 0.9;
+        }
+        
+        .cast-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
         .cast-method {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 15px;
+            border-radius: 12px;
             text-align: center;
         }
         
         .method-title {
-            font-size: 1.2em;
+            font-size: 1em;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         
         .method-description {
-            font-size: 0.9em;
-            margin-bottom: 15px;
+            font-size: 0.85em;
+            margin-bottom: 12px;
             opacity: 0.8;
         }
         
@@ -61,18 +129,33 @@
             background: #4285f4;
             color: white;
             border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            border-radius: 25px;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+            box-shadow: 0 3px 10px rgba(66, 133, 244, 0.3);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            margin: 5px;
+            gap: 6px;
             width: 100%;
             justify-content: center;
+        }
+        
+        .overlay-button.present {
+            background: #4caf50;
+            font-size: 14px;
+            padding: 10px 16px;
+        }
+        
+        .overlay-button.present:hover {
+            background: #388e3c;
+        }
+        
+        .overlay-button.cast {
+            background: #ff5722;
+            font-size: 12px;
+            padding: 8px 12px;
         }
         
         .cast-button:hover {
@@ -1328,61 +1411,36 @@
             }
         }
         
-        // Event listeners
-        document.getElementById('nativeCastButton').addEventListener('click', startNativeCast);
-        document.getElementById('presentationButton').addEventListener('click', startPresentation);
-        document.getElementById('quickCaptureButton').addEventListener('click', startQuickCapture);
-        document.getElementById('airplayButton').addEventListener('click', startAirPlay);
-        document.getElementById('googleCastButton').addEventListener('click', startGoogleCast);
-        document.getElementById('downloadButton').addEventListener('click', startDownload);
-        
-        // Overlay controls
-        document.getElementById('overlayCastButton').addEventListener('click', () => {
-            if (mediaStream) {
-                startNativeCast();
-            } else {
-                updateStatus('No active stream. Capture screen first.', 'error');
+        // Display device capability info
+        function showDeviceInfo() {
+            let infoText = '🔍 Device detected: ';
+            
+            if (deviceCapabilities.isMobile) {
+                infoText += 'Mobile device - ';
             }
-        });
-        
-        document.getElementById('overlayPresentButton').addEventListener('click', () => {
-            if (mediaStream) {
-                startPresentation();
+            
+            if (deviceCapabilities.isChrome) {
+                infoText += 'Chrome (excellent compatibility)';
+            } else if (deviceCapabilities.isSafari) {
+                infoText += 'Safari (AirPlay available)';
+            } else if (deviceCapabilities.isEdge) {
+                infoText += 'Edge (good compatibility)';
+            } else if (deviceCapabilities.isFirefox) {
+                infoText += 'Firefox (limited casting options)';
             } else {
-                updateStatus('No active stream. Capture screen first.', 'error');
+                infoText += 'Unknown browser (limited compatibility)';
             }
-        });
+            
+            if (deviceCapabilities.hasUrlToCast) {
+                infoText += ' • URL casting enabled';
+            }
+            
+            infoText += '. URL casting works best with the Present button!';
+            
+            updateStatus(infoText, 'info');
+        }
         
-        document.getElementById('overlayFloatingButton').addEventListener('click', toggleFloatingControls);
-        
-        // Floating controls
-        document.getElementById('floatingCastButton').addEventListener('click', () => {
-            if (mediaStream) startNativeCast();
-            else updateStatus('No active stream. Capture screen first.', 'error');
-        });
-        
-        document.getElementById('floatingPresentButton').addEventListener('click', () => {
-            if (mediaStream) startPresentation();
-            else updateStatus('No active stream. Capture screen first.', 'error');
-        });
-        
-        document.getElementById('floatingAirplayButton').addEventListener('click', () => {
-            if (mediaStream) startAirPlay();
-            else updateStatus('No active stream. Capture screen first.', 'error');
-        });
-        
-        document.getElementById('floatingChangeSourceButton').addEventListener('click', changeSource);
-        document.getElementById('floatingCloseButton').addEventListener('click', () => {
-            document.getElementById('floatingControls').style.display = 'none';
-        });
-        
-        // Regular controls
-        document.getElementById('stopStreamButton').addEventListener('click', stopStream);
-        document.getElementById('pauseStreamButton').addEventListener('click', togglePause);
-        document.getElementById('changeSourceButton').addEventListener('click', changeSource);
-        document.getElementById('fullscreenButton').addEventListener('click', toggleFullscreen);
-        
-        // Initialize when page loads
+        // Event listeners - updated for new structure
         document.addEventListener('DOMContentLoaded', () => {
             // Check if this is a presentation display
             initializePresentationDisplay();
@@ -1390,8 +1448,72 @@
             // Only initialize controls if not in display mode
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('display') !== 'true') {
-                initializeApp(); // Enhanced initialization
+                initializeApp();
                 initializeControls();
+                
+                // URL input event listeners
+                document.getElementById('urlCastButton').addEventListener('click', startUrlCast);
+                
+                // Allow Enter key in URL input
+                document.getElementById('urlInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        startUrlCast();
+                    }
+                });
+                
+                // Other casting method event listeners
+                document.getElementById('nativeCastButton').addEventListener('click', startNativeCast);
+                document.getElementById('presentationButton').addEventListener('click', startPresentation);
+                document.getElementById('quickCaptureButton').addEventListener('click', startQuickCapture);
+                document.getElementById('airplayButton').addEventListener('click', startAirPlay);
+                document.getElementById('googleCastButton').addEventListener('click', startGoogleCast);
+                document.getElementById('downloadButton').addEventListener('click', startDownload);
+                
+                // Overlay controls
+                document.getElementById('overlayCastButton').addEventListener('click', () => {
+                    if (mediaStream) {
+                        startNativeCast();
+                    } else {
+                        updateStatus('No active stream. Capture screen first.', 'error');
+                    }
+                });
+                
+                document.getElementById('overlayPresentButton').addEventListener('click', () => {
+                    if (mediaStream) {
+                        startPresentation();
+                    } else {
+                        updateStatus('No active stream. Capture screen first.', 'error');
+                    }
+                });
+                
+                document.getElementById('overlayFloatingButton').addEventListener('click', toggleFloatingControls);
+                
+                // Floating controls
+                document.getElementById('floatingCastButton').addEventListener('click', () => {
+                    if (mediaStream) startNativeCast();
+                    else updateStatus('No active stream. Capture screen first.', 'error');
+                });
+                
+                document.getElementById('floatingPresentButton').addEventListener('click', () => {
+                    if (mediaStream) startPresentation();
+                    else updateStatus('No active stream. Capture screen first.', 'error');
+                });
+                
+                document.getElementById('floatingAirplayButton').addEventListener('click', () => {
+                    if (mediaStream) startAirPlay();
+                    else updateStatus('No active stream. Capture screen first.', 'error');
+                });
+                
+                document.getElementById('floatingChangeSourceButton').addEventListener('click', changeSource);
+                document.getElementById('floatingCloseButton').addEventListener('click', () => {
+                    document.getElementById('floatingControls').style.display = 'none';
+                });
+                
+                // Regular controls
+                document.getElementById('stopStreamButton').addEventListener('click', stopStream);
+                document.getElementById('pauseStreamButton').addEventListener('click', togglePause);
+                document.getElementById('changeSourceButton').addEventListener('click', changeSource);
+                document.getElementById('fullscreenButton').addEventListener('click', toggleFullscreen);
                 
                 // Make floating controls draggable
                 makeDraggable(document.getElementById('floatingControls'));
