@@ -207,6 +207,7 @@
             display: none;
             margin: 20px 0;
             text-align: center;
+            position: relative;
         }
         
         .video-preview video {
@@ -215,6 +216,81 @@
             border-radius: 10px;
             background: #000;
         }
+        
+        .video-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .overlay-button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .overlay-button:hover {
+            background: #3367d6;
+            transform: scale(1.05);
+        }
+        
+        .overlay-button.cast {
+            background: #ff5722;
+        }
+        
+        .overlay-button.cast:hover {
+            background: #e64a19;
+        }
+        
+        .overlay-button.present {
+            background: #9c27b0;
+        }
+        
+        .overlay-button.present:hover {
+            background: #7b1fa2;
+        }
+        
+        .floating-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-width: 200px;
+        }
+        
+        .floating-controls h4 {
+            margin: 0 0 10px 0;
+            color: white;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .floating-controls .overlay-button {
+            width: 100%;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -222,7 +298,7 @@
         <h1>🎭 Universal Screen Cast</h1>
         
         <div id="status" class="status info">
-            🎯 Every method shows screen/window/tab selection. Browser Cast requires manual casting from video controls. Presentation API needs second display. WebRTC creates shareable URLs.
+            🔄 Analyzing device capabilities and compatibility...
         </div>
         
         <div class="cast-methods">
@@ -239,14 +315,6 @@
                 <div class="method-description">Present to connected monitors or wireless displays. Limited browser support (Chrome/Edge). Requires external display.</div>
                 <button id="presentationButton" class="cast-button presentation">
                     📽️ Present Screen
-                </button>
-            </div>
-            
-            <div class="cast-method">
-                <div class="method-title">🔗 WebRTC Stream</div>
-                <div class="method-description">Direct peer-to-peer streaming. Share a URL with any device to receive the stream.</div>
-                <button id="webrtcButton" class="cast-button webrtc">
-                    🚀 WebRTC Cast
                 </button>
             </div>
             
@@ -273,14 +341,14 @@
                     💾 Download Video
                 </button>
             </div>
-        </div>
-        
-        <div class="status info" style="margin: 20px 0; font-size: 0.9em;">
-            <strong>💡 Realistic Expectations:</strong><br>
-            • <strong>Browser Cast:</strong> No automatic cast device picker. You'll need to manually right-click the video → "Cast..." or use browser menu (⋮) → Cast<br>
-            • <strong>Presentation:</strong> Works with second monitors and some wireless displays (Miracast). Limited browser support.<br>
-            • <strong>Most Reliable:</strong> WebRTC Stream creates a shareable URL that works on any device<br>
-            • <strong>Alternative:</strong> Download method creates a video file you can transfer manually
+            
+            <div class="cast-method">
+                <div class="method-title">🎮 Quick Capture</div>
+                <div class="method-description">Just capture your screen and use overlay controls to choose casting method.</div>
+                <button id="quickCaptureButton" class="cast-button" style="background: #4caf50;">
+                    📹 Quick Capture
+                </button>
+            </div>
         </div>
         
         <div class="settings-panel">
@@ -338,16 +406,47 @@
         
         <div id="videoPreview" class="video-preview">
             <h4>📺 Stream Preview</h4>
-            <video id="previewVideo" controls muted></video>
+            <div style="position: relative; display: inline-block;">
+                <video id="previewVideo" controls muted></video>
+                <div id="videoOverlay" class="video-overlay">
+                    <button id="overlayCastButton" class="overlay-button cast" title="Cast this video">
+                        📱 Cast
+                    </button>
+                    <button id="overlayPresentButton" class="overlay-button present" title="Present to display">
+                        📽️ Present
+                    </button>
+                    <button id="overlayFloatingButton" class="overlay-button" title="Show floating controls">
+                        🎮 Controls
+                    </button>
+                </div>
+            </div>
         </div>
         
-        <div id="webrtcInfo" style="display: none;" class="status info">
-            <h4>🔗 WebRTC Stream Info</h4>
-            <p>Share this URL with other devices to view the stream:</p>
-            <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; word-break: break-all;">
-                <span id="streamUrl">Generating URL...</span>
-            </div>
-            <button id="copyUrlButton" class="control-button">📋 Copy URL</button>
+        <div id="floatingControls" class="floating-controls">
+            <h4>🎯 Quick Cast Controls</h4>
+            <button id="floatingCastButton" class="overlay-button cast">
+                📱 Browser Cast
+            </button>
+            <button id="floatingPresentButton" class="overlay-button present">
+                📽️ Presentation
+            </button>
+            <button id="floatingAirplayButton" class="overlay-button" style="background: #ff9800;" disabled>
+                📱 AirPlay
+            </button>
+            <button id="floatingChangeSourceButton" class="overlay-button" style="background: #2196F3;">
+                🔄 Change Source
+            </button>
+            <button id="floatingCloseButton" class="overlay-button" style="background: #666;">
+                ❌ Close
+            </button>
+        </div>
+        
+        <div class="status info" style="margin: 20px 0; font-size: 0.9em;">
+            <strong>💡 Smart Features:</strong><br>
+            • <strong>Auto-Detection:</strong> Only compatible casting methods are shown based on your device/browser<br>
+            • <strong>URL Casting:</strong> Add ?cast=https://example.com to cast any website directly<br>
+            • <strong>Device Optimization:</strong> Interface adapts to your browser's capabilities<br>
+            • <strong>HTTPS/Localhost:</strong> Screen capture requires secure connection for security
         </div>
     </div>
 
@@ -359,6 +458,287 @@
         let presentationConnection = null;
         let recordedChunks = [];
         let mediaRecorder = null;
+        let deviceCapabilities = {};
+        
+        // Detect device and browser capabilities
+        function detectDeviceCapabilities() {
+            const ua = navigator.userAgent;
+            const capabilities = {
+                // Browser detection
+                isChrome: /Chrome/.test(ua) && !/Edge/.test(ua),
+                isSafari: /Safari/.test(ua) && !/Chrome/.test(ua),
+                isEdge: /Edge/.test(ua),
+                isFirefox: /Firefox/.test(ua),
+                
+                // Device detection
+                isMobile: /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua),
+                isIOS: /iPhone|iPad|iPod/.test(ua),
+                isAndroid: /Android/.test(ua),
+                isMac: /Mac/.test(ua),
+                isWindows: /Windows/.test(ua),
+                
+                // Feature detection
+                hasGetDisplayMedia: !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia),
+                hasPresentationAPI: 'PresentationRequest' in window,
+                hasAirPlay: !!(window.WebKitPlaybackTargetAvailabilityEvent),
+                hasMediaRecorder: 'MediaRecorder' in window,
+                hasRemotePlayback: 'remote' in HTMLVideoElement.prototype,
+                
+                // Protocol detection
+                isHTTPS: window.location.protocol === 'https:',
+                isLocalhost: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
+                
+                // URL parameter detection
+                hasUrlToCast: new URLSearchParams(window.location.search).has('cast'),
+                urlToCast: new URLSearchParams(window.location.search).get('cast')
+            };
+            
+            return capabilities;
+        }
+        
+        // Hide incompatible casting methods
+        function hideIncompatibleMethods() {
+            const methods = document.querySelectorAll('.cast-method');
+            
+            methods.forEach(method => {
+                const button = method.querySelector('button');
+                const methodId = button.id;
+                let shouldHide = false;
+                let reason = '';
+                
+                switch(methodId) {
+                    case 'nativeCastButton':
+                        // Browser cast works best on Chrome/Edge
+                        if (!deviceCapabilities.isChrome && !deviceCapabilities.isEdge) {
+                            shouldHide = true;
+                            reason = 'Browser casting works best in Chrome or Edge';
+                        }
+                        break;
+                        
+                    case 'presentationButton':
+                        // Presentation API mainly Chrome/Edge, requires external display
+                        if (!deviceCapabilities.hasPresentationAPI || deviceCapabilities.isMobile) {
+                            shouldHide = true;
+                            reason = 'Presentation API not supported or no external display available';
+                        }
+                        break;
+                        
+                    case 'airplayButton':
+                        // AirPlay only works on Safari/iOS
+                        if (!deviceCapabilities.hasAirPlay && !deviceCapabilities.isIOS) {
+                            shouldHide = true;
+                            reason = 'AirPlay only available in Safari on macOS/iOS';
+                        }
+                        break;
+                        
+                    case 'googleCastButton':
+                        // Google Cast works best on Chrome
+                        if (!deviceCapabilities.isChrome || deviceCapabilities.isMobile) {
+                            shouldHide = true;
+                            reason = 'Google Cast SDK works best in Chrome on desktop';
+                        }
+                        break;
+                        
+                    case 'downloadButton':
+                        // MediaRecorder widely supported but check anyway
+                        if (!deviceCapabilities.hasMediaRecorder) {
+                            shouldHide = true;
+                            reason = 'Recording not supported in this browser';
+                        }
+                        break;
+                        
+                    case 'quickCaptureButton':
+                        // Quick capture needs screen sharing
+                        if (!deviceCapabilities.hasGetDisplayMedia) {
+                            shouldHide = true;
+                            reason = 'Screen capture not supported';
+                        }
+                        break;
+                        
+                    case 'urlCastButton':
+                        // URL cast always available if we have a URL
+                        break;
+                }
+                
+                // Check if screen capture is available
+                if ((methodId === 'nativeCastButton' || methodId === 'presentationButton' || methodId === 'quickCaptureButton') &&
+                    (!deviceCapabilities.hasGetDisplayMedia || (!deviceCapabilities.isHTTPS && !deviceCapabilities.isLocalhost))) {
+                    shouldHide = true;
+                    reason = 'Screen capture requires HTTPS or localhost';
+                }
+                
+                if (shouldHide) {
+                    method.style.display = 'none';
+                    console.log(`Hidden ${methodId}: ${reason}`);
+                } else {
+                    method.style.display = 'block';
+                }
+            });
+        }
+        
+        // Add URL casting method if URL parameter exists
+        function addUrlCastingMethod() {
+            if (!deviceCapabilities.hasUrlToCast) return;
+            
+            const urlToCast = deviceCapabilities.urlToCast;
+            const methodsContainer = document.querySelector('.cast-methods');
+            
+            const urlCastMethod = document.createElement('div');
+            urlCastMethod.className = 'cast-method';
+            urlCastMethod.innerHTML = `
+                <div class="method-title">🔗 URL Cast</div>
+                <div class="method-description">Cast the specified URL: ${urlToCast.length > 50 ? urlToCast.substring(0, 50) + '...' : urlToCast}</div>
+                <button id="urlCastButton" class="cast-button" style="background: #607d8b;">
+                    🌐 Cast URL
+                </button>
+            `;
+            
+            // Insert as first option
+            methodsContainer.insertBefore(urlCastMethod, methodsContainer.firstChild);
+            
+            // Add event listener
+            document.getElementById('urlCastButton').addEventListener('click', startUrlCast);
+        }
+        
+        // Display device capability info
+        function showDeviceInfo() {
+            let infoText = '🔍 Device detected: ';
+            
+            if (deviceCapabilities.isMobile) {
+                infoText += 'Mobile device - ';
+            }
+            
+            if (deviceCapabilities.isChrome) {
+                infoText += 'Chrome (excellent compatibility)';
+            } else if (deviceCapabilities.isSafari) {
+                infoText += 'Safari (AirPlay available)';
+            } else if (deviceCapabilities.isEdge) {
+                infoText += 'Edge (good compatibility)';
+            } else if (deviceCapabilities.isFirefox) {
+                infoText += 'Firefox (limited casting options)';
+            } else {
+                infoText += 'Unknown browser (limited compatibility)';
+            }
+            
+            if (deviceCapabilities.hasUrlToCast) {
+                infoText += ' • URL casting enabled';
+            }
+            
+            updateStatus(infoText, 'info');
+        }
+        
+        // URL Casting Method
+        async function startUrlCast() {
+            const urlToCast = deviceCapabilities.urlToCast;
+            if (!urlToCast) {
+                updateStatus('No URL specified for casting', 'error');
+                return;
+            }
+            
+            try {
+                updateStatus('🌐 Loading URL for casting...', 'info');
+                
+                // Create iframe to display the URL
+                const iframe = document.createElement('iframe');
+                iframe.src = urlToCast;
+                iframe.style.width = '100%';
+                iframe.style.height = '400px';
+                iframe.style.border = 'none';
+                iframe.style.borderRadius = '10px';
+                
+                // Create container for URL cast
+                const urlContainer = document.createElement('div');
+                urlContainer.id = 'urlCastContainer';
+                urlContainer.style.margin = '20px 0';
+                urlContainer.style.textAlign = 'center';
+                urlContainer.innerHTML = `
+                    <h4>🔗 URL Cast Preview</h4>
+                    <div style="position: relative; display: inline-block;">
+                        ${iframe.outerHTML}
+                        <div class="video-overlay">
+                            <button class="overlay-button cast" onclick="castUrlContent()" title="Cast this URL">
+                                📱 Cast
+                            </button>
+                            <button class="overlay-button present" onclick="presentUrlContent()" title="Present to display">
+                                📽️ Present
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Insert after video preview
+                const videoPreview = document.getElementById('videoPreview');
+                videoPreview.parentNode.insertBefore(urlContainer, videoPreview.nextSibling);
+                
+                currentMethod = 'url';
+                updateStatus(`✅ URL loaded: ${urlToCast}. Use overlay controls to cast.`, 'success');
+                
+                // Show control panel
+                document.getElementById('controlPanel').style.display = 'block';
+                
+            } catch (error) {
+                updateStatus('Failed to load URL: ' + error.message, 'error');
+            }
+        }
+        
+        // Cast URL content
+        window.castUrlContent = function() {
+            if (deviceCapabilities.isChrome || deviceCapabilities.isEdge) {
+                updateStatus('📱 Right-click the URL content and select "Cast..." to cast to your devices.', 'info');
+            } else {
+                updateStatus('URL casting works best in Chrome or Edge browsers.', 'error');
+            }
+        };
+        
+        // Present URL content
+        window.presentUrlContent = async function() {
+            if (!deviceCapabilities.hasPresentationAPI) {
+                updateStatus('Presentation API not supported in this browser', 'error');
+                return;
+            }
+            
+            try {
+                const urlToCast = deviceCapabilities.urlToCast;
+                presentationRequest = new PresentationRequest([urlToCast]);
+                
+                updateStatus('🔍 Looking for presentation displays...', 'info');
+                presentationConnection = await presentationRequest.start();
+                
+                presentationConnection.addEventListener('connect', () => {
+                    updateStatus('✅ URL being presented on external display!', 'success');
+                    currentMethod = 'url-presentation';
+                });
+                
+                presentationConnection.addEventListener('close', () => {
+                    updateStatus('URL presentation closed', 'info');
+                });
+                
+            } catch (error) {
+                updateStatus('URL presentation failed: ' + error.message, 'error');
+            }
+        };
+        
+        // Enhanced initialization
+        function initializeApp() {
+            // Detect capabilities first
+            deviceCapabilities = detectDeviceCapabilities();
+            
+            // Add URL casting if URL parameter exists
+            addUrlCastingMethod();
+            
+            // Hide incompatible methods
+            hideIncompatibleMethods();
+            
+            // Show device info
+            showDeviceInfo();
+            
+            // Check for critical missing features
+            if (!deviceCapabilities.hasGetDisplayMedia && !deviceCapabilities.hasUrlToCast) {
+                updateStatus('⚠️ Screen capture not available. Try HTTPS, Chrome browser, or add ?cast=URL parameter for URL casting.', 'error');
+            } else if (!deviceCapabilities.isHTTPS && !deviceCapabilities.isLocalhost && !deviceCapabilities.hasUrlToCast) {
+                updateStatus('⚠️ HTTPS required for screen capture. Use https:// or localhost, or add ?cast=URL for URL casting.', 'error');
+            }
+        }
         
         // Get current settings from UI
         function getCurrentSettings() {
@@ -409,7 +789,7 @@
             return constraints;
         }
         
-        // Enhanced capture screen with full selection dialog
+        // Enhanced capture screen with overlay controls
         async function captureScreen(forceNewCapture = false) {
             // If we already have a stream and not forcing new capture, use existing
             if (mediaStream && !forceNewCapture) {
@@ -440,11 +820,15 @@
                 };
                 
                 if (settings.includeAudio) {
-                    baseConstraints.audio = {
-                        echoCancellation: false,
-                        noiseSuppression: false,
-                        sampleRate: 48000
-                    };
+                    if (settings.includeSystemAudio) {
+                        baseConstraints.audio = {
+                            echoCancellation: false,
+                            noiseSuppression: false,
+                            sampleRate: 48000
+                        };
+                    } else {
+                        baseConstraints.audio = true;
+                    }
                 }
                 
                 mediaStream = await navigator.mediaDevices.getDisplayMedia(baseConstraints);
@@ -479,12 +863,15 @@
                 
                 updateStatus(`✅ Capturing: ${sourceInfo} (${trackSettings.width}x${trackSettings.height})`, 'success');
                 
-                // Show preview
+                // Show preview with overlay controls
                 const video = document.getElementById('previewVideo');
                 video.srcObject = mediaStream;
                 video.play();
                 document.getElementById('videoPreview').style.display = 'block';
                 document.getElementById('controlPanel').style.display = 'block';
+                
+                // Make sure overlay is visible
+                document.getElementById('videoOverlay').style.display = 'flex';
                 
                 // Handle stream end
                 videoTrack.addEventListener('ended', () => {
@@ -514,60 +901,78 @@
             updateStatus(errorMessage, 'error');
         }
         
-        // Method 1: Browser Native Cast
+        // Method 1: Browser Native Cast - Simplified and working approach
         async function startNativeCast() {
-            if (!mediaStream) {
-                mediaStream = await captureScreen();
-                if (!mediaStream) return;
-            }
+            // Always show capture dialog
+            mediaStream = await captureScreen(true); // Force new capture
+            if (!mediaStream) return;
             
             try {
-                // Try to trigger browser's native cast UI
-                if (navigator.mediaSession) {
+                const video = document.getElementById('previewVideo');
+                
+                // Enable casting for the video element
+                video.disableRemotePlayback = false;
+                
+                // Set up Media Session API for better integration
+                if ('mediaSession' in navigator) {
                     navigator.mediaSession.metadata = new MediaMetadata({
-                        title: 'Screen Cast',
+                        title: 'Screen Cast Stream',
                         artist: 'Screen Casting App',
-                        artwork: [{ src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M1 18v3h3c0-1.66-1.34-3-3-3zm0-4v2c2.76 0 5 2.24 5 5h2c0-3.87-3.13-7-7-7z"/></svg>' }]
+                        album: 'Live Screen Share'
                     });
                 }
                 
-                const video = document.getElementById('previewVideo');
-                if (video.webkitEnterFullscreen) {
-                    video.webkitEnterFullscreen();
-                } else if (video.requestPictureInPicture) {
-                    await video.requestPictureInPicture();
+                currentMethod = 'native';
+                
+                // The most reliable approach: instruct user where to find cast controls
+                updateStatus('✅ Video ready for casting! Look for cast button (📱) in video controls or right-click video → "Cast..."', 'success');
+                
+                // Try to enter Picture-in-Picture to make cast button more visible
+                try {
+                    if (video.requestPictureInPicture) {
+                        await video.requestPictureInPicture();
+                        updateStatus('✅ Picture-in-Picture active. Look for cast button in the PiP window controls.', 'success');
+                    }
+                } catch (pipError) {
+                    // PiP failed, just show the regular instructions
+                    updateStatus('✅ Video ready! Right-click video → "Cast..." or check browser menu (⋮) → "Cast..."', 'success');
                 }
                 
-                currentMethod = 'native';
-                updateStatus('Using browser native casting. Look for cast button in video controls or browser menu.', 'success');
-                
             } catch (error) {
-                updateStatus('Native casting not available. Error: ' + error.message, 'error');
+                updateStatus('Browser casting setup failed: ' + error.message, 'error');
             }
         }
         
-        // Method 2: Presentation API
+        // Method 2: Presentation API - Simplified for actual functionality
         async function startPresentation() {
             if (!('PresentationRequest' in window)) {
-                updateStatus('Presentation API not supported in this browser', 'error');
+                updateStatus('Presentation API not supported in this browser (try Chrome/Edge)', 'error');
                 return;
             }
             
-            if (!mediaStream) {
-                mediaStream = await captureScreen();
-                if (!mediaStream) return;
-            }
+            // Always show capture dialog
+            mediaStream = await captureScreen(true); // Force new capture
+            if (!mediaStream) return;
             
             try {
-                // Create a data URL for the presentation
-                const presentationUrl = window.location.href + '#presentation';
+                // Presentation API is designed for showing web pages on external displays
+                // We'll create a simple receiver page that can display the video stream
+                const presentationUrl = window.location.href.split('?')[0] + '?display=true';
                 presentationRequest = new PresentationRequest([presentationUrl]);
                 
+                updateStatus('🔍 Looking for presentation displays (external monitors, Miracast, etc.)...', 'info');
                 presentationConnection = await presentationRequest.start();
                 
                 presentationConnection.addEventListener('connect', () => {
-                    updateStatus('Connected to presentation display!', 'success');
+                    updateStatus('✅ Connected to presentation display!', 'success');
                     currentMethod = 'presentation';
+                    
+                    // Send a message to the presentation display to show the stream
+                    const message = {
+                        type: 'startStream',
+                        streamUrl: window.URL.createObjectURL(mediaStream)
+                    };
+                    presentationConnection.send(JSON.stringify(message));
                 });
                 
                 presentationConnection.addEventListener('close', () => {
@@ -581,33 +986,139 @@
                 });
                 
             } catch (error) {
-                updateStatus('Presentation failed: ' + error.message, 'error');
+                if (error.name === 'NotSupportedError') {
+                    updateStatus('No presentation displays found. Connect a second monitor, Miracast device, or Chromecast.', 'error');
+                } else if (error.name === 'AbortError') {
+                    updateStatus('Presentation cancelled by user', 'info');
+                } else {
+                    updateStatus('Presentation failed: ' + error.message + '. Try connecting an external display.', 'error');
+                }
             }
         }
         
-        // Method 3: WebRTC Stream
-        async function startWebRTCCast() {
-            if (!mediaStream) {
-                mediaStream = await captureScreen();
-                if (!mediaStream) return;
+        // Handle presentation display mode
+        function initializePresentationDisplay() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('display') === 'true') {
+                // This page is being displayed on a presentation screen
+                document.body.innerHTML = `
+                    <div style="
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100vw;
+                        height: 100vh;
+                        background: #000;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        flex-direction: column;
+                        color: white;
+                        font-family: Arial, sans-serif;
+                    ">
+                        <div id="displayStatus" style="font-size: 2em; margin-bottom: 20px;">
+                            📺 Waiting for screen stream...
+                        </div>
+                        <video id="displayVideo" style="
+                            max-width: 100%;
+                            max-height: 100%;
+                            background: #222;
+                        " autoplay muted></video>
+                    </div>
+                `;
+                
+                // Listen for presentation messages
+                if ('PresentationReceiver' in window) {
+                    navigator.presentation.receiver.connectionList.then(list => {
+                        list.connections.forEach(setupDisplayConnection);
+                        list.addEventListener('connectionavailable', event => {
+                            setupDisplayConnection(event.connection);
+                        });
+                    });
+                }
+            }
+        }
+        
+        // Set up connection for presentation display
+        function setupDisplayConnection(connection) {
+            const video = document.getElementById('displayVideo');
+            const status = document.getElementById('displayStatus');
+            
+            if (!video || !status) return;
+            
+            connection.addEventListener('message', event => {
+                try {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.type === 'startStream' && data.streamUrl) {
+                        video.src = data.streamUrl;
+                        video.play();
+                        status.textContent = '✅ Displaying screen stream';
+                    }
+                } catch (error) {
+                    console.error('Error processing display message:', error);
+                    status.textContent = '❌ Error displaying stream';
+                }
+            });
+            
+            connection.addEventListener('close', () => {
+                status.textContent = '📱 Connection closed';
+                if (video.srcObject) {
+                    video.srcObject.getTracks().forEach(track => track.stop());
+                }
+            });
+        }
+        
+        // Method 3: Quick Capture - Just capture screen with overlay controls
+        async function startQuickCapture() {
+            // Always show capture dialog
+            mediaStream = await captureScreen(true); // Force new capture
+            if (!mediaStream) return;
+            
+            currentMethod = 'quick';
+            updateStatus('✅ Screen captured! Use overlay controls on video or floating controls to cast.', 'success');
+        }
+        
+        // Show/hide floating controls
+        function toggleFloatingControls() {
+            const controls = document.getElementById('floatingControls');
+            const isVisible = controls.style.display === 'flex';
+            controls.style.display = isVisible ? 'none' : 'flex';
+            
+            if (!isVisible) {
+                updateStatus('📱 Floating controls shown. You can move this around your screen.', 'info');
+            }
+        }
+        
+        // Make floating controls draggable
+        function makeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            
+            element.onmousedown = dragMouseDown;
+            
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
             }
             
-            try {
-                // Create a simple WebRTC connection (simplified for demo)
-                const streamId = 'stream_' + Math.random().toString(36).substr(2, 9);
-                const streamUrl = `${window.location.origin}${window.location.pathname}?watch=${streamId}`;
-                
-                document.getElementById('streamUrl').textContent = streamUrl;
-                document.getElementById('webrtcInfo').style.display = 'block';
-                
-                currentMethod = 'webrtc';
-                updateStatus('WebRTC stream created! Share the URL with other devices.', 'success');
-                
-                // In a real implementation, you'd set up a WebRTC peer connection
-                // and signaling server here
-                
-            } catch (error) {
-                updateStatus('WebRTC casting failed: ' + error.message, 'error');
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+            
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
             }
         }
         
@@ -618,16 +1129,15 @@
                 return;
             }
             
-            if (!mediaStream) {
-                mediaStream = await captureScreen();
-                if (!mediaStream) return;
-            }
+            // Always show capture dialog
+            mediaStream = await captureScreen(true); // Force new capture
+            if (!mediaStream) return;
             
             try {
                 const video = document.getElementById('previewVideo');
                 video.webkitShowPlaybackTargetPicker();
                 currentMethod = 'airplay';
-                updateStatus('AirPlay picker shown. Select your AirPlay device.', 'success');
+                updateStatus('✅ AirPlay picker shown. Select your AirPlay device.', 'success');
                 
             } catch (error) {
                 updateStatus('AirPlay failed: ' + error.message, 'error');
@@ -665,10 +1175,9 @@
         
         // Method 6: Download Stream
         async function startDownload() {
-            if (!mediaStream) {
-                mediaStream = await captureScreen();
-                if (!mediaStream) return;
-            }
+            // Always show capture dialog
+            mediaStream = await captureScreen(true); // Force new capture
+            if (!mediaStream) return;
             
             try {
                 recordedChunks = [];
@@ -690,40 +1199,16 @@
                     a.download = `screen-recording-${new Date().toISOString().slice(0, 19)}.webm`;
                     a.click();
                     URL.revokeObjectURL(url);
-                    updateStatus('Video downloaded successfully!', 'success');
+                    updateStatus('✅ Video downloaded successfully!', 'success');
                 };
                 
                 mediaRecorder.start();
                 currentMethod = 'download';
-                updateStatus('Recording started. Click "Stop Stream" to download the video.', 'success');
+                updateStatus('✅ Recording started. Click "Stop Stream" to download the video.', 'success');
                 
             } catch (error) {
                 updateStatus('Recording failed: ' + error.message, 'error');
             }
-        }
-        
-        // Stop current stream
-        function stopStream() {
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
-                mediaStream = null;
-            }
-            
-            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
-            }
-            
-            if (presentationConnection) {
-                presentationConnection.close();
-                presentationConnection = null;
-            }
-            
-            document.getElementById('videoPreview').style.display = 'none';
-            document.getElementById('controlPanel').style.display = 'none';
-            document.getElementById('webrtcInfo').style.display = 'none';
-            
-            updateStatus('Stream stopped', 'info');
-            currentMethod = null;
         }
         
         // Change source while keeping current cast active
@@ -774,12 +1259,36 @@
             }
         }
         
-        // Copy WebRTC URL
-        function copyStreamUrl() {
-            const url = document.getElementById('streamUrl').textContent;
-            navigator.clipboard.writeText(url).then(() => {
-                updateStatus('Stream URL copied to clipboard!', 'success');
-            });
+        // Stop current stream
+        function stopStream() {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+            
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+            }
+            
+            if (presentationConnection) {
+                presentationConnection.close();
+                presentationConnection = null;
+            }
+            
+            // Hide all UI elements
+            document.getElementById('videoPreview').style.display = 'none';
+            document.getElementById('controlPanel').style.display = 'none';
+            document.getElementById('floatingControls').style.display = 'none';
+            document.getElementById('videoOverlay').style.display = 'none';
+            
+            // Remove URL cast container if it exists
+            const urlContainer = document.getElementById('urlCastContainer');
+            if (urlContainer) {
+                urlContainer.remove();
+            }
+            
+            updateStatus('Stream stopped', 'info');
+            currentMethod = null;
         }
         
         // Update status display
@@ -809,25 +1318,69 @@
                 }
             });
             
-            // Check AirPlay support
+            // Check AirPlay support for both regular and floating buttons
             if (window.WebKitPlaybackTargetAvailabilityEvent) {
                 document.getElementById('airplayButton').disabled = false;
+                // Enable floating AirPlay button too
+                document.getElementById('floatingAirplayButton').disabled = false;
+            } else {
+                document.getElementById('floatingAirplayButton').disabled = true;
             }
         }
         
         // Event listeners
         document.getElementById('nativeCastButton').addEventListener('click', startNativeCast);
         document.getElementById('presentationButton').addEventListener('click', startPresentation);
-        document.getElementById('webrtcButton').addEventListener('click', startWebRTCCast);
+        document.getElementById('quickCaptureButton').addEventListener('click', startQuickCapture);
         document.getElementById('airplayButton').addEventListener('click', startAirPlay);
         document.getElementById('googleCastButton').addEventListener('click', startGoogleCast);
         document.getElementById('downloadButton').addEventListener('click', startDownload);
         
+        // Overlay controls
+        document.getElementById('overlayCastButton').addEventListener('click', () => {
+            if (mediaStream) {
+                startNativeCast();
+            } else {
+                updateStatus('No active stream. Capture screen first.', 'error');
+            }
+        });
+        
+        document.getElementById('overlayPresentButton').addEventListener('click', () => {
+            if (mediaStream) {
+                startPresentation();
+            } else {
+                updateStatus('No active stream. Capture screen first.', 'error');
+            }
+        });
+        
+        document.getElementById('overlayFloatingButton').addEventListener('click', toggleFloatingControls);
+        
+        // Floating controls
+        document.getElementById('floatingCastButton').addEventListener('click', () => {
+            if (mediaStream) startNativeCast();
+            else updateStatus('No active stream. Capture screen first.', 'error');
+        });
+        
+        document.getElementById('floatingPresentButton').addEventListener('click', () => {
+            if (mediaStream) startPresentation();
+            else updateStatus('No active stream. Capture screen first.', 'error');
+        });
+        
+        document.getElementById('floatingAirplayButton').addEventListener('click', () => {
+            if (mediaStream) startAirPlay();
+            else updateStatus('No active stream. Capture screen first.', 'error');
+        });
+        
+        document.getElementById('floatingChangeSourceButton').addEventListener('click', changeSource);
+        document.getElementById('floatingCloseButton').addEventListener('click', () => {
+            document.getElementById('floatingControls').style.display = 'none';
+        });
+        
+        // Regular controls
         document.getElementById('stopStreamButton').addEventListener('click', stopStream);
         document.getElementById('pauseStreamButton').addEventListener('click', togglePause);
         document.getElementById('changeSourceButton').addEventListener('click', changeSource);
         document.getElementById('fullscreenButton').addEventListener('click', toggleFullscreen);
-        document.getElementById('copyUrlButton').addEventListener('click', copyStreamUrl);
         
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', () => {
@@ -837,7 +1390,11 @@
             // Only initialize controls if not in display mode
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('display') !== 'true') {
+                initializeApp(); // Enhanced initialization
                 initializeControls();
+                
+                // Make floating controls draggable
+                makeDraggable(document.getElementById('floatingControls'));
             }
         });
         
