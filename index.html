@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Universal Screen Cast v2.5</title>
+    <title>Universal Screen Cast v3.0 - iPad & Desktop</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -373,7 +373,7 @@
         
         <!-- Version Badge at Top -->
         <div style="background: #4caf50; color: white; padding: 10px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 14px;">
-            ✅ VERSION 2.5-ANDROID-FIX LOADED
+            ✅ VERSION 3.0-IPAD-DESKTOP | iPad & Desktop Only
         </div>
         
         <div id="status" class="status info">
@@ -566,7 +566,10 @@
         </div>
         
         <div style="text-align: center; background: #4caf50; color: white; padding: 15px; border-radius: 10px; font-weight: bold; margin-top: 20px; font-size: 16px;">
-            ✅ Version 2.5-ANDROID-FIX (Updated: 2025-01-16 10:30 AM)
+            ✅ Version 3.0-IPAD-DESKTOP - iPad & Desktop Only (2025-01-16)
+        </div>
+        <div style="text-align: center; margin-top: 10px; opacity: 0.8; font-size: 14px;">
+            Supported Devices: iPad & Desktop | Mobile Phones Not Supported
         </div>
     </div>
 
@@ -609,8 +612,10 @@
                 isEdge: /Edge/.test(ua),
                 isFirefox: /Firefox/.test(ua),
                 
-                // Device detection
-                isMobile: /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua),
+                // Device detection - iPad separate from iPhone
+                isMobile: /Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua),
+                isIPad: /iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1),
+                isIPhone: /iPhone|iPod/.test(ua),
                 isIOS: /iPhone|iPad|iPod/.test(ua),
                 isAndroid: /Android/i.test(ua),
                 isMac: /Mac/.test(ua),
@@ -632,7 +637,7 @@
                 urlToCast: new URLSearchParams(window.location.search).get('cast')
             };
             
-            debugAdd('📱 Device: ' + (capabilities.isAndroid ? 'Android' : capabilities.isIOS ? 'iOS' : 'Other'));
+            debugAdd('📱 Device: ' + (capabilities.isIPad ? 'iPad' : capabilities.isIPhone ? 'iPhone' : capabilities.isAndroid ? 'Android' : 'Desktop'));
             debugAdd('🌐 Mobile: ' + capabilities.isMobile);
             debugAdd('🔗 Has Cast URL: ' + capabilities.hasUrlToCast);
             
@@ -708,29 +713,22 @@
             if (smartFeatures) {
                 let featuresHTML = '<strong>💡 URL Casting Mode:</strong><br>';
                 
-                if (deviceCapabilities.isMobile) {
-                    if (deviceCapabilities.isIOS) {
-                        featuresHTML += '• <strong>iOS Device:</strong> AirPlay casting for videos, Safari for web pages<br>';
-                        featuresHTML += '• <strong>Screen Mirroring:</strong> Use Control Center for full screen casting<br>';
-                    } else if (deviceCapabilities.isAndroid) {
-                        featuresHTML += '• <strong>Android Device:</strong> Multiple casting methods available<br>';
-                        featuresHTML += '• <strong>Quick Cast:</strong> Use Quick Settings screen mirroring (easiest!)<br>';
-                        featuresHTML += '• <strong>YouTube URLs:</strong> Open directly in YouTube app for cast icon<br>';
-                        featuresHTML += '• <strong>Share API:</strong> Share to any casting-compatible app<br>';
-                    } else {
-                        featuresHTML += '• <strong>Mobile Device:</strong> Browser-based casting available<br>';
-                        featuresHTML += '• <strong>Screen Mirroring:</strong> Check device settings for wireless display<br>';
-                    }
-                    featuresHTML += '• <strong>Same Network:</strong> Ensure device and TV share WiFi for casting';
-                } else {
+                if (deviceCapabilities.isIPad) {
+                    featuresHTML += '• <strong>iPad Device:</strong> Safari casting available<br>';
+                    featuresHTML += '• <strong>Open in Safari:</strong> Opens URL in Safari for native casting<br>';
+                    featuresHTML += '• <strong>Screen Mirroring:</strong> Use Control Center → Screen Mirroring if needed<br>';
+                } else if (!deviceCapabilities.isMobile) {
+                    featuresHTML += '• <strong>Desktop Device:</strong> Multiple presentation options<br>';
                     featuresHTML += '• <strong>Presentation API:</strong> Cast to external displays and projectors<br>';
                     
                     if (deviceCapabilities.hasAirPlay || deviceCapabilities.isSafari) {
                         featuresHTML += '• <strong>AirPlay:</strong> Cast to Apple TV and AirPlay-enabled devices<br>';
                     }
                     
-                    featuresHTML += '• <strong>Optimized Interface:</strong> Streamlined for URL parameter casting<br>';
                     featuresHTML += '• <strong>Multi-Protocol:</strong> Works with Miracast, wireless displays, and more';
+                } else {
+                    featuresHTML += '• <strong>Mobile Device:</strong> This interface is optimized for iPad and Desktop<br>';
+                    featuresHTML += '• <strong>Recommendation:</strong> Please access from iPad or Desktop for best experience';
                 }
                 
                 smartFeatures.innerHTML = featuresHTML;
