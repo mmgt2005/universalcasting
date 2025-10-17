@@ -558,7 +558,7 @@
         </div>
         
         <div style="text-align: center; opacity: 0.6; font-size: 0.8em; margin-top: 20px;">
-            Version 2.2-DEBUG - On-Screen Debug Panel (2025-01-16)
+            Version 2.3-FIXED - All User Fixes Applied ✅ (2025-01-16)
         </div>
     </div>
 
@@ -655,30 +655,42 @@
         
         // Streamlined interface when cast parameter is present
         function initializeStreamlinedInterface() {
+            debugAdd('🎨 initializeStreamlinedInterface() called');
+            
             // Hide elements we don't need when casting via URL parameter
-            const featuredSection = document.querySelector('.featured-section');
             const otherMethods = document.querySelector('.other-methods');
             const floatingControls = document.getElementById('floatingControls');
             const videoPreview = document.getElementById('videoPreview');
             const settingsPanel = document.getElementById('settingsPanel');
             
-            // Hide the manual URL input section (not needed in parameter mode)
-            if (featuredSection) featuredSection.style.display = 'none';
+            // DON'T hide the featured section - keep it visible for preview
+            // const featuredSection = document.querySelector('.featured-section');
+            // if (featuredSection) featuredSection.style.display = 'none';
             
-            // CRITICAL: Hide other casting methods section completely
+            // Hide other methods completely
             if (otherMethods) {
                 otherMethods.style.display = 'none';
                 otherMethods.style.visibility = 'hidden';
+                debugAdd('✅ Hidden other methods');
             }
             
-            // Hide floating controls (not needed in streamlined mode)
-            if (floatingControls) floatingControls.style.display = 'none';
+            // Hide floating controls
+            if (floatingControls) {
+                floatingControls.style.display = 'none';
+                debugAdd('✅ Hidden floating controls');
+            }
             
             // Hide video preview (only used for screen capture)
-            if (videoPreview) videoPreview.style.display = 'none';
+            if (videoPreview) {
+                videoPreview.style.display = 'none';
+                debugAdd('✅ Hidden video preview');
+            }
             
             // Hide settings panel (not relevant for URL casting)
-            if (settingsPanel) settingsPanel.style.display = 'none';
+            if (settingsPanel) {
+                settingsPanel.style.display = 'none';
+                debugAdd('✅ Hidden settings panel');
+            }
             
             // Update smart features message for streamlined mode
             const smartFeatures = document.getElementById('smartFeatures');
@@ -711,6 +723,7 @@
                 }
                 
                 smartFeatures.innerHTML = featuresHTML;
+                debugAdd('✅ Updated smart features');
             }
             
             // Show device info
@@ -719,9 +732,12 @@
             // Auto-load the URL from parameter
             addUrlCastingMethod();
             
-            // Show stream controls (will be visible once URL loads)
+            // Show stream controls
             const controlPanel = document.getElementById('controlPanel');
-            if (controlPanel) controlPanel.style.display = 'block';
+            if (controlPanel) {
+                controlPanel.style.display = 'block';
+                debugAdd('✅ Showing control panel');
+            }
         }
         
         // Full interface for manual use
