@@ -372,6 +372,12 @@
             🔄 Analyzing device capabilities and compatibility...
         </div>
         
+        <!-- Debug Panel -->
+        <div id="debugPanel" style="background: rgba(0,0,0,0.8); color: #0f0; padding: 15px; border-radius: 10px; margin: 20px 0; font-family: monospace; font-size: 12px; display: none;">
+            <strong style="color: #fff;">🔍 Debug Info:</strong><br>
+            <div id="debugContent">Loading...</div>
+        </div>
+        
         <!-- Featured URL Casting Section -->
         <div class="featured-section">
             <div class="featured-title">🌐 Featured: URL Casting</div>
@@ -552,7 +558,7 @@
         </div>
         
         <div style="text-align: center; opacity: 0.6; font-size: 0.8em; margin-top: 20px;">
-            Version 2.1b - Rewritten Android Casting (2025-01-16)
+            Version 2.2-DEBUG - On-Screen Debug Panel (2025-01-16)
         </div>
     </div>
 
@@ -564,11 +570,27 @@
         let recordedChunks = [];
         let mediaRecorder = null;
         let deviceCapabilities = {};
+        let debugLog = [];
+        
+        // Debug logging function
+        function debugAdd(message) {
+            debugLog.push(message);
+            console.log('[DEBUG]', message);
+            
+            const debugPanel = document.getElementById('debugPanel');
+            const debugContent = document.getElementById('debugContent');
+            
+            if (debugPanel && debugContent) {
+                debugPanel.style.display = 'block';
+                debugContent.innerHTML = debugLog.join('<br>');
+            }
+        }
         
         // Detect device and browser capabilities
         function detectDeviceCapabilities() {
             const ua = navigator.userAgent;
             
+            debugAdd('🔍 Detecting device...');
             console.log('=== Device Detection ===');
             console.log('User Agent:', ua);
             
@@ -602,6 +624,10 @@
                 urlToCast: new URLSearchParams(window.location.search).get('cast')
             };
             
+            debugAdd('📱 Device: ' + (capabilities.isAndroid ? 'Android' : capabilities.isIOS ? 'iOS' : 'Other'));
+            debugAdd('🌐 Mobile: ' + capabilities.isMobile);
+            debugAdd('🔗 Has Cast URL: ' + capabilities.hasUrlToCast);
+            
             console.log('Detected capabilities:', capabilities);
             
             return capabilities;
@@ -609,14 +635,19 @@
         
         // Enhanced initialization with parameter-based UI
         function initializeApp() {
+            debugAdd('🚀 initializeApp() called');
+            
             // Detect capabilities first
             deviceCapabilities = detectDeviceCapabilities();
+            debugAdd('✅ Capabilities detected');
             
             // Check if we have a cast parameter
             if (deviceCapabilities.hasUrlToCast) {
+                debugAdd('📺 Cast URL detected: ' + deviceCapabilities.urlToCast);
                 // Streamlined interface for URL parameter
                 initializeStreamlinedInterface();
             } else {
+                debugAdd('🖥️ No cast URL - using full interface');
                 // Full interface for manual use
                 initializeFullInterface();
             }
@@ -784,10 +815,16 @@
         
         // Add URL casting method if URL parameter exists
         function addUrlCastingMethod() {
-            if (!deviceCapabilities.hasUrlToCast) return;
+            debugAdd('⚙️ addUrlCastingMethod() called');
+            
+            if (!deviceCapabilities.hasUrlToCast) {
+                debugAdd('❌ No cast URL parameter found');
+                return;
+            }
             
             const urlToCast = deviceCapabilities.urlToCast;
             
+            debugAdd('🎯 Cast URL: ' + urlToCast);
             console.log('=== URL Casting Mode ===');
             console.log('Cast URL detected:', urlToCast);
             console.log('Device type:', {
@@ -799,8 +836,10 @@
             });
             
             // For streamlined interface, directly load the URL
+            debugAdd('⏳ Starting URL cast in 100ms...');
             console.log('Loading URL for casting:', urlToCast);
             setTimeout(() => {
+                debugAdd('▶️ Calling startUrlCastFromParameter()');
                 startUrlCastFromParameter(urlToCast);
             }, 100);
         }
