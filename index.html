@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Universal Screen Cast v3.0 - iPad & Desktop</title>
+    <title>Universal Screen Cast v3.2 - iPad & Desktop</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -87,89 +87,6 @@
             box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
         }
         
-        .other-methods {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 30px 0;
-        }
-        
-        .other-methods h3 {
-            font-size: 1.2em;
-            margin-bottom: 15px;
-            text-align: center;
-            opacity: 0.9;
-        }
-        
-        .cast-methods {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .cast-method {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-        }
-        
-        .method-title {
-            font-size: 1em;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        
-        .method-description {
-            font-size: 0.85em;
-            margin-bottom: 12px;
-            opacity: 0.8;
-        }
-        
-        .cast-button {
-            background: #4285f4;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 10px rgba(66, 133, 244, 0.3);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            width: 100%;
-            justify-content: center;
-        }
-        
-        .cast-button:hover {
-            background: #3367d6;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4);
-        }
-        
-        .cast-button:disabled {
-            background: #666;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .cast-button.webrtc { background: #ff5722; }
-        .cast-button.webrtc:hover { background: #e64a19; }
-        
-        .cast-button.presentation { background: #9c27b0; }
-        .cast-button.presentation:hover { background: #7b1fa2; }
-        
-        .cast-button.native { background: #4caf50; }
-        .cast-button.native:hover { background: #388e3c; }
-        
-        .cast-button.airplay { background: #ff9800; }
-        .cast-button.airplay:hover { background: #f57c00; }
-        
         .status {
             margin: 20px 0;
             padding: 15px;
@@ -198,172 +115,19 @@
             padding: 20px;
             border-radius: 15px;
             margin: 20px 0;
-        }
-        
-        .settings-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .setting-group {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-        }
-        
-        .setting-group h4 {
-            margin: 0 0 10px 0;
-            color: #fff;
-        }
-        
-        select, input[type="range"], input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0;
-            border: none;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-        }
-        
-        .range-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .range-value {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 4px 8px;
-            border-radius: 5px;
-            min-width: 60px;
-            text-align: center;
-            font-weight: bold;
-        }
-        
-        label {
-            display: block;
-            margin: 8px 0 4px 0;
-            font-weight: bold;
+            display: none;
         }
         
         .control-panel {
             display: none;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
         }
         
-        .control-button {
-            background: #ff5722;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .control-button:hover {
-            background: #e64a19;
-            transform: translateY(-1px);
+        .other-methods {
+            display: none;
         }
         
         .video-preview {
             display: none;
-            margin: 20px 0;
-            text-align: center;
-            position: relative;
-        }
-        
-        .video-preview video {
-            max-width: 100%;
-            height: 200px;
-            border-radius: 10px;
-            background: #000;
-        }
-        
-        .video-overlay {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 10px;
-            padding: 10px;
-            display: flex;
-            gap: 8px;
-            backdrop-filter: blur(5px);
-        }
-        
-        .overlay-button {
-            background: #4285f4;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .overlay-button:hover {
-            background: #3367d6;
-            transform: scale(1.05);
-        }
-        
-        .overlay-button.cast {
-            background: #ff5722;
-            font-size: 12px;
-            padding: 8px 12px;
-        }
-        
-        .overlay-button.cast:hover {
-            background: #e64a19;
-        }
-        
-        .overlay-button.present {
-            background: #4caf50;
-            font-size: 14px;
-            padding: 10px 16px;
-        }
-        
-        .overlay-button.present:hover {
-            background: #388e3c;
-        }
-        
-        .floating-controls {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.9);
-            border-radius: 15px;
-            padding: 15px;
-            display: none;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            min-width: 200px;
-        }
-        
-        .floating-controls h4 {
-            margin: 0 0 10px 0;
-            color: white;
-            font-size: 14px;
-            text-align: center;
-        }
-        
-        .floating-controls .overlay-button {
-            width: 100%;
-            justify-content: center;
         }
     </style>
 </head>
@@ -371,205 +135,41 @@
     <div class="container">
         <h1>🎭 Universal Screen Cast</h1>
         
-        <!-- Version Badge at Top -->
-        <div style="background: #4caf50; color: white; padding: 10px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 14px;">
-            ✅ VERSION 3.0-IPAD-DESKTOP | iPad & Desktop Only
-        </div>
-        
         <div id="status" class="status info">
-            🔄 Analyzing device capabilities and compatibility...
+            📺 Analyzing device capabilities...
         </div>
         
-        <!-- Debug Panel -->
-        <div id="debugPanel" style="background: rgba(0,0,0,0.8); color: #0f0; padding: 15px; border-radius: 10px; margin: 20px 0; font-family: monospace; font-size: 12px; display: none;">
-            <strong style="color: #fff;">🔍 Debug Info:</strong><br>
-            <div id="debugContent">Loading...</div>
-        </div>
-        
-        <!-- Featured URL Casting Section -->
         <div class="featured-section" id="manualUrlSection">
             <div class="featured-title">🌐 Featured: URL Casting</div>
             <p style="text-align: center; opacity: 0.9; margin-bottom: 20px;">
-                Cast any website directly to your display. Works best with the Present button!
+                Cast any website directly to your display. Works best with iPad and Desktop!
             </p>
             
             <div class="url-input-container">
-                <input type="text" id="urlInput" class="url-input" placeholder="Enter URL to cast (e.g., https://youtube.com/watch?v=abc123)" />
+                <input type="text" id="urlInput" class="url-input" placeholder="Enter URL to cast (e.g., https://example.com)" />
                 <button id="urlCastButton" class="url-cast-button">
                     🚀 Load URL
                 </button>
             </div>
-            
-            <div id="urlCastContainer" style="display: none; margin-top: 20px;">
-                <!-- URL preview will be inserted here -->
-            </div>
         </div>
         
-        <!-- Stream Controls Section -->
-        <div id="controlPanel" class="control-panel" style="display: none;">
-            <h3>🎮 Stream Controls</h3>
-            <button id="stopStreamButton" class="control-button">⏹️ Stop</button>
-            <button id="pauseStreamButton" class="control-button">⏸️ Pause</button>
-            <button id="changeSourceButton" class="control-button" style="background: #2196F3;">🔄 Change Source</button>
-            <button id="fullscreenButton" class="control-button">🖥️ Fullscreen</button>
-        </div>
-        
-        <!-- Stream Settings -->
-        <div class="settings-panel" id="settingsPanel">
-            <h3>⚙️ Stream Settings</h3>
-            <p style="opacity: 0.8; margin-bottom: 15px; font-size: 0.9em;">
-                📝 <strong>Note:</strong> These settings apply to screen capture methods. URL casting uses the original quality.
-            </p>
-            <div class="settings-grid">
-                <div class="setting-group">
-                    <h4>📺 Audio & Quality</h4>
-                    <label>
-                        <input type="checkbox" id="includeAudio" checked> Include Audio
-                    </label>
-                    <label>
-                        <input type="checkbox" id="includeSystemAudio"> System Audio (Chrome 105+)
-                    </label>
-                </div>
-                
-                <div class="setting-group">
-                    <h4>🎥 Video Quality</h4>
-                    <label for="resolution">Resolution:</label>
-                    <select id="resolution">
-                        <option value="720p">720p (1280x720)</option>
-                        <option value="1080p" selected>1080p (1920x1080)</option>
-                        <option value="1440p">1440p (2560x1440)</option>
-                        <option value="custom">Custom</option>
-                    </select>
-                    
-                    <div id="customResolution" style="display: none;">
-                        <label for="customWidth">Width:</label>
-                        <input type="number" id="customWidth" value="1920" min="640" max="3840">
-                        <label for="customHeight">Height:</label>
-                        <input type="number" id="customHeight" value="1080" min="480" max="2160">
-                    </div>
-                </div>
-                
-                <div class="setting-group">
-                    <h4>⚡ Performance</h4>
-                    <label>Frame Rate: <span id="frameRateDisplay">30 fps</span></label>
-                    <div class="range-container">
-                        <input type="range" id="frameRate" min="15" max="60" value="30" step="5">
-                        <span class="range-value" id="frameRateValue">30 fps</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Video Preview Section (for screen capture methods) -->
-        <div id="videoPreview" class="video-preview">
-            <h4>📺 Stream Preview</h4>
-            <div style="position: relative; display: inline-block;">
-                <video id="previewVideo" controls muted></video>
-                <div id="videoOverlay" class="video-overlay">
-                    <button id="overlayCastButton" class="overlay-button cast" title="Cast this video">
-                        📱 Cast
-                    </button>
-                    <button id="overlayPresentButton" class="overlay-button present" title="Present to display">
-                        📽️ Present
-                    </button>
-                    <button id="overlayFloatingButton" class="overlay-button" title="Show floating controls">
-                        🎮 Controls
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Other Casting Methods -->
-        <div class="other-methods">
-            <h3>🔧 Other Casting Methods</h3>
-            <p style="text-align: center; opacity: 0.8; font-size: 0.9em; margin-bottom: 15px;">
-                Additional methods for screen capture and casting (compatibility varies by device)
-            </p>
-            
-            <div class="cast-methods" id="otherCastMethods">
-                <div class="cast-method">
-                    <div class="method-title">📡 Browser Native Cast</div>
-                    <div class="method-description">Prepares video for manual casting. Right-click video → "Cast..."</div>
-                    <button id="nativeCastButton" class="cast-button native">
-                        📺 Browser Cast
-                    </button>
-                </div>
-                
-                <div class="cast-method">
-                    <div class="method-title">🌐 Presentation API</div>
-                    <div class="method-description">Present to connected monitors or wireless displays.</div>
-                    <button id="presentationButton" class="cast-button presentation">
-                        📽️ Present Screen
-                    </button>
-                </div>
-                
-                <div class="cast-method">
-                    <div class="method-title">🍎 AirPlay (Safari)</div>
-                    <div class="method-description">Native AirPlay support for Safari users.</div>
-                    <button id="airplayButton" class="cast-button airplay" disabled>
-                        📱 AirPlay Cast
-                    </button>
-                </div>
-                
-                <div class="cast-method">
-                    <div class="method-title">📱 Google Cast SDK</div>
-                    <div class="method-description">Traditional Chromecast method.</div>
-                    <button id="googleCastButton" class="cast-button">
-                        📡 Google Cast
-                    </button>
-                </div>
-                
-                <div class="cast-method">
-                    <div class="method-title">💻 Download Stream</div>
-                    <div class="method-description">Record and download as video file.</div>
-                    <button id="downloadButton" class="cast-button" style="background: #607d8b;">
-                        💾 Download Video
-                    </button>
-                </div>
-                
-                <div class="cast-method">
-                    <div class="method-title">🎮 Quick Capture</div>
-                    <div class="method-description">Capture screen with overlay controls.</div>
-                    <button id="quickCaptureButton" class="cast-button" style="background: #4caf50;">
-                        📹 Quick Capture
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Floating Controls -->
-        <div id="floatingControls" class="floating-controls">
-            <h4>🎯 Quick Cast Controls</h4>
-            <button id="floatingCastButton" class="overlay-button cast">
-                📱 Browser Cast
-            </button>
-            <button id="floatingPresentButton" class="overlay-button present">
-                📽️ Presentation
-            </button>
-            <button id="floatingAirplayButton" class="overlay-button" style="background: #ff9800;" disabled>
-                📱 AirPlay
-            </button>
-            <button id="floatingChangeSourceButton" class="overlay-button" style="background: #2196F3;">
-                🔄 Change Source
-            </button>
-            <button id="floatingCloseButton" class="overlay-button" style="background: #666;">
-                ❌ Close
-            </button>
-        </div>
+        <div id="controlPanel" class="control-panel"></div>
+        <div class="settings-panel" id="settingsPanel"></div>
+        <div class="other-methods"></div>
+        <div class="video-preview" id="videoPreview"></div>
         
         <div class="status info" style="margin: 20px 0; font-size: 0.9em;" id="smartFeatures">
             <strong>💡 Smart Features:</strong><br>
-            • <strong>Auto-Detection:</strong> Only compatible casting methods are shown based on your device/browser<br>
-            • <strong>URL Casting:</strong> Add ?cast=https://example.com to cast any website directly<br>
-            • <strong>Device Optimization:</strong> Interface adapts to your browser's capabilities<br>
-            • <strong>HTTPS/Localhost:</strong> Screen capture requires secure connection for security
+            • <strong>iPad & Desktop:</strong> Optimized for casting to external displays<br>
+            • <strong>URL Parameters:</strong> Add ?cast=URL to start casting immediately<br>
+            • <strong>HTTPS Required:</strong> Secure connection needed for optimal performance
         </div>
         
         <div style="text-align: center; background: #4caf50; color: white; padding: 15px; border-radius: 10px; font-weight: bold; margin-top: 20px; font-size: 16px;">
-            ✅ Version 3.0-IPAD-DESKTOP - iPad & Desktop Only (2025-01-16)
+            ✅ Version 3.2-CLEAN - iPad & Desktop Optimized
         </div>
         <div style="text-align: center; margin-top: 10px; opacity: 0.8; font-size: 14px;">
-            Supported Devices: iPad & Desktop | Mobile Phones Not Supported
+            Supported: iPad (Safari + AirPlay) | Desktop (Presentation API + Wireless Displays)
         </div>
     </div>
 
@@ -578,1116 +178,250 @@
         let currentMethod = null;
         let presentationRequest = null;
         let presentationConnection = null;
-        let recordedChunks = [];
-        let mediaRecorder = null;
         let deviceCapabilities = {};
-        let debugLog = [];
         
-        // Debug logging function
-        function debugAdd(message) {
-            debugLog.push(message);
-            console.log('[DEBUG]', message);
-            
-            const debugPanel = document.getElementById('debugPanel');
-            const debugContent = document.getElementById('debugContent');
-            
-            if (debugPanel && debugContent) {
-                debugPanel.style.display = 'block';
-                debugContent.innerHTML = debugLog.join('<br>');
-            }
-        }
-        
-        // Detect device and browser capabilities
         function detectDeviceCapabilities() {
             const ua = navigator.userAgent;
             
-            debugAdd('🔍 Detecting device...');
-            console.log('=== Device Detection ===');
-            console.log('User Agent:', ua);
+            // Enhanced iPad detection
+            const isIPadUserAgent = /iPad/.test(ua);
+            const isMacWithTouch = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+            const isIPad = isIPadUserAgent || isMacWithTouch;
             
             const capabilities = {
-                // Browser detection
                 isChrome: /Chrome/.test(ua) && !/Edge/.test(ua),
                 isSafari: /Safari/.test(ua) && !/Chrome/.test(ua),
                 isEdge: /Edge/.test(ua),
                 isFirefox: /Firefox/.test(ua),
-                
-                // Device detection - iPad separate from iPhone
                 isMobile: /Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua),
-                isIPad: /iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1),
+                isIPad: isIPad,
                 isIPhone: /iPhone|iPod/.test(ua),
-                isIOS: /iPhone|iPad|iPod/.test(ua),
+                isIOS: /iPhone|iPad|iPod/.test(ua) || isMacWithTouch,
                 isAndroid: /Android/i.test(ua),
                 isMac: /Mac/.test(ua),
                 isWindows: /Windows/.test(ua),
-                
-                // Feature detection
                 hasGetDisplayMedia: !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia),
                 hasPresentationAPI: 'PresentationRequest' in window,
                 hasAirPlay: !!(window.WebKitPlaybackTargetAvailabilityEvent),
-                hasMediaRecorder: 'MediaRecorder' in window,
-                hasRemotePlayback: 'remote' in HTMLVideoElement.prototype,
-                
-                // Protocol detection
                 isHTTPS: window.location.protocol === 'https:',
                 isLocalhost: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
-                
-                // URL parameter detection
                 hasUrlToCast: new URLSearchParams(window.location.search).has('cast'),
                 urlToCast: new URLSearchParams(window.location.search).get('cast')
             };
             
-            debugAdd('📱 Device: ' + (capabilities.isIPad ? 'iPad' : capabilities.isIPhone ? 'iPhone' : capabilities.isAndroid ? 'Android' : 'Desktop'));
-            debugAdd('🌐 Mobile: ' + capabilities.isMobile);
-            debugAdd('🔗 Has Cast URL: ' + capabilities.hasUrlToCast);
-            
-            console.log('Detected capabilities:', capabilities);
-            
             return capabilities;
         }
         
-        // Enhanced initialization with parameter-based UI
         function initializeApp() {
-            debugAdd('🚀 initializeApp() called');
-            
-            // Detect capabilities first
             deviceCapabilities = detectDeviceCapabilities();
-            debugAdd('✅ Capabilities detected');
             
-            // Check if we have a cast parameter
             if (deviceCapabilities.hasUrlToCast) {
-                debugAdd('📺 Cast URL detected: ' + deviceCapabilities.urlToCast);
-                // Streamlined interface for URL parameter
                 initializeStreamlinedInterface();
             } else {
-                debugAdd('🖥️ No cast URL - using full interface');
-                // Full interface for manual use
                 initializeFullInterface();
             }
         }
         
-        // Streamlined interface when cast parameter is present
         function initializeStreamlinedInterface() {
-            debugAdd('🎨 initializeStreamlinedInterface() called');
+            document.getElementById('manualUrlSection').style.display = 'none';
+            document.getElementById('controlPanel').style.display = 'none';
+            document.getElementById('settingsPanel').style.display = 'none';
             
-            // Hide elements we don't need when casting via URL parameter
-            const manualUrlSection = document.getElementById('manualUrlSection');
-            const otherMethods = document.querySelector('.other-methods');
-            const floatingControls = document.getElementById('floatingControls');
-            const videoPreview = document.getElementById('videoPreview');
-            const settingsPanel = document.getElementById('settingsPanel');
-            
-            // HIDE the manual URL input section (not needed in parameter mode)
-            if (manualUrlSection) {
-                manualUrlSection.style.display = 'none';
-                debugAdd('✅ Hidden manual URL input section');
-            }
-            
-            // Hide other methods completely
-            if (otherMethods) {
-                otherMethods.style.display = 'none';
-                otherMethods.style.visibility = 'hidden';
-                debugAdd('✅ Hidden other methods');
-            }
-            
-            // Hide floating controls
-            if (floatingControls) {
-                floatingControls.style.display = 'none';
-                debugAdd('✅ Hidden floating controls');
-            }
-            
-            // Hide video preview (only used for screen capture)
-            if (videoPreview) {
-                videoPreview.style.display = 'none';
-                debugAdd('✅ Hidden video preview');
-            }
-            
-            // Hide settings panel (not relevant for URL casting)
-            if (settingsPanel) {
-                settingsPanel.style.display = 'none';
-                debugAdd('✅ Hidden settings panel');
-            }
-            
-            // Update smart features message for streamlined mode
             const smartFeatures = document.getElementById('smartFeatures');
             if (smartFeatures) {
-                let featuresHTML = '<strong>💡 URL Casting Mode:</strong><br>';
-                
+                let html = '<strong>💡 URL Casting Mode:</strong><br>';
                 if (deviceCapabilities.isIPad) {
-                    featuresHTML += '• <strong>iPad Device:</strong> Safari casting available<br>';
-                    featuresHTML += '• <strong>Open in Safari:</strong> Opens URL in Safari for native casting<br>';
-                    featuresHTML += '• <strong>Screen Mirroring:</strong> Use Control Center → Screen Mirroring if needed<br>';
-                } else if (!deviceCapabilities.isMobile) {
-                    featuresHTML += '• <strong>Desktop Device:</strong> Multiple presentation options<br>';
-                    featuresHTML += '• <strong>Presentation API:</strong> Cast to external displays and projectors<br>';
-                    
-                    if (deviceCapabilities.hasAirPlay || deviceCapabilities.isSafari) {
-                        featuresHTML += '• <strong>AirPlay:</strong> Cast to Apple TV and AirPlay-enabled devices<br>';
-                    }
-                    
-                    featuresHTML += '• <strong>Multi-Protocol:</strong> Works with Miracast, wireless displays, and more';
+                    html += '• <strong>iPad:</strong> Safari casting with AirPlay support<br>';
+                    html += '• <strong>Open in Safari:</strong> Opens URL for native casting<br>';
+                    html += '• <strong>Screen Mirroring:</strong> Control Center → Screen Mirroring';
+                } else if (!deviceCapabilities.isMobile && !deviceCapabilities.isIPad) {
+                    html += '• <strong>Desktop:</strong> Multiple presentation options<br>';
+                    html += '• <strong>Presentation API:</strong> Cast to external displays<br>';
+                    html += '• <strong>Wireless Displays:</strong> Miracast, AirPlay, Chromecast';
                 } else {
-                    featuresHTML += '• <strong>Mobile Device:</strong> This interface is optimized for iPad and Desktop<br>';
-                    featuresHTML += '• <strong>Recommendation:</strong> Please access from iPad or Desktop for best experience';
+                    html += '• <strong>Mobile Phone:</strong> Please use iPad or Desktop for best experience';
                 }
-                
-                smartFeatures.innerHTML = featuresHTML;
-                debugAdd('✅ Updated smart features');
+                smartFeatures.innerHTML = html;
             }
             
-            // Show device info
             showDeviceInfo();
-            
-            // Auto-load the URL from parameter
             addUrlCastingMethod();
-            
-            // Show stream controls
-            const controlPanel = document.getElementById('controlPanel');
-            if (controlPanel) {
-                controlPanel.style.display = 'block';
-                debugAdd('✅ Showing control panel');
-            }
-            
-            debugAdd('✅ Streamlined interface setup complete');
         }
         
-        // Full interface for manual use
         function initializeFullInterface() {
-            // Add URL casting if URL parameter exists (shouldn't happen in this case)
-            addUrlCastingMethod();
-            
-            // Hide incompatible methods
-            hideIncompatibleMethods();
-            
-            // Show device info
             showDeviceInfo();
-            
-            // Check for critical missing features
-            if (!deviceCapabilities.hasGetDisplayMedia && !deviceCapabilities.hasUrlToCast) {
-                updateStatus('⚠️ Screen capture not available. Try HTTPS, Chrome browser, or add ?cast=URL parameter for URL casting.', 'error');
-            } else if (!deviceCapabilities.isHTTPS && !deviceCapabilities.isLocalhost && !deviceCapabilities.hasUrlToCast) {
-                updateStatus('⚠️ HTTPS required for screen capture. Use https:// or localhost, or add ?cast=URL for URL casting.', 'error');
-            }
-        }
-        
-        // Hide incompatible casting methods - updated for new structure
-        function hideIncompatibleMethods() {
-            const methods = document.querySelectorAll('#otherCastMethods .cast-method');
-            
-            methods.forEach(method => {
-                const button = method.querySelector('button');
-                const methodId = button.id;
-                let shouldHide = false;
-                let reason = '';
-                
-                switch(methodId) {
-                    case 'nativeCastButton':
-                        if (!deviceCapabilities.isChrome && !deviceCapabilities.isEdge) {
-                            shouldHide = true;
-                            reason = 'Browser casting works best in Chrome or Edge';
-                        }
-                        break;
-                        
-                    case 'presentationButton':
-                        if (!deviceCapabilities.hasPresentationAPI || deviceCapabilities.isMobile) {
-                            shouldHide = true;
-                            reason = 'Presentation API not supported or no external display available';
-                        }
-                        break;
-                        
-                    case 'airplayButton':
-                        if (!deviceCapabilities.hasAirPlay && !deviceCapabilities.isIOS) {
-                            shouldHide = true;
-                            reason = 'AirPlay only available in Safari on macOS/iOS';
-                        }
-                        break;
-                        
-                    case 'googleCastButton':
-                        if (!deviceCapabilities.isChrome || deviceCapabilities.isMobile) {
-                            shouldHide = true;
-                            reason = 'Google Cast SDK works best in Chrome on desktop';
-                        }
-                        break;
-                        
-                    case 'downloadButton':
-                        if (!deviceCapabilities.hasMediaRecorder) {
-                            shouldHide = true;
-                            reason = 'Recording not supported in this browser';
-                        }
-                        break;
-                        
-                    case 'quickCaptureButton':
-                        if (!deviceCapabilities.hasGetDisplayMedia) {
-                            shouldHide = true;
-                            reason = 'Screen capture not supported';
-                        }
-                        break;
-                }
-                
-                // Check if screen capture is available for relevant methods
-                if ((methodId === 'nativeCastButton' || methodId === 'presentationButton' || methodId === 'quickCaptureButton') &&
-                    (!deviceCapabilities.hasGetDisplayMedia || (!deviceCapabilities.isHTTPS && !deviceCapabilities.isLocalhost))) {
-                    shouldHide = true;
-                    reason = 'Screen capture requires HTTPS or localhost';
-                }
-                
-                if (shouldHide) {
-                    method.style.display = 'none';
-                    console.log(`Hidden ${methodId}: ${reason}`);
-                } else {
-                    method.style.display = 'block';
-                }
+            document.getElementById('urlCastButton').addEventListener('click', startUrlCast);
+            document.getElementById('urlInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') startUrlCast();
             });
         }
         
-        // Add URL casting method if URL parameter exists
-        function addUrlCastingMethod() {
-            debugAdd('⚙️ addUrlCastingMethod() called');
-            
-            if (!deviceCapabilities.hasUrlToCast) {
-                debugAdd('❌ No cast URL parameter found');
-                return;
-            }
-            
-            const urlToCast = deviceCapabilities.urlToCast;
-            
-            debugAdd('🎯 Cast URL: ' + urlToCast);
-            console.log('=== URL Casting Mode ===');
-            console.log('Cast URL detected:', urlToCast);
-            console.log('Device type:', {
-                isMobile: deviceCapabilities.isMobile,
-                isIOS: deviceCapabilities.isIOS,
-                isAndroid: deviceCapabilities.isAndroid,
-                isSafari: deviceCapabilities.isSafari,
-                isChrome: deviceCapabilities.isChrome
-            });
-            
-            // For streamlined interface, directly load the URL
-            debugAdd('⏳ Starting URL cast in 100ms...');
-            console.log('Loading URL for casting:', urlToCast);
-            setTimeout(() => {
-                debugAdd('▶️ Calling startUrlCastFromParameter()');
-                startUrlCastFromParameter(urlToCast);
-            }, 100);
-        }
-        
-        // Display device capability info
         function showDeviceInfo() {
-            let infoText = '';
-            
-            if (deviceCapabilities.hasUrlToCast) {
-                // Streamlined message for URL parameter mode
-                infoText = '🎯 URL casting mode active. ';
-                
-                let availableOptions = [];
-                if (deviceCapabilities.hasPresentationAPI) {
-                    availableOptions.push('Presentation API');
-                }
-                if (deviceCapabilities.hasAirPlay || deviceCapabilities.isSafari) {
-                    availableOptions.push('AirPlay');
-                }
-                
-                if (availableOptions.length > 0) {
-                    infoText += availableOptions.join(' + ') + ' available - ready to cast!';
-                } else {
-                    infoText += 'Limited casting support in this browser.';
-                }
+            let msg = '✅ Ready - ';
+            if (deviceCapabilities.isIPad) {
+                msg += 'iPad detected (Safari + AirPlay casting available)';
+            } else if (!deviceCapabilities.isMobile && !deviceCapabilities.isIPad) {
+                msg += 'Desktop detected (Presentation API available)';
             } else {
-                // Full message for manual mode
-                infoText = '🔍 Device detected: ';
-                
-                if (deviceCapabilities.isMobile) {
-                    infoText += 'Mobile device - ';
-                }
-                
-                if (deviceCapabilities.isChrome) {
-                    infoText += 'Chrome (excellent compatibility)';
-                } else if (deviceCapabilities.isSafari) {
-                    infoText += 'Safari (AirPlay available)';
-                } else if (deviceCapabilities.isEdge) {
-                    infoText += 'Edge (good compatibility)';
-                } else if (deviceCapabilities.isFirefox) {
-                    infoText += 'Firefox (limited casting options)';
-                } else {
-                    infoText += 'Unknown browser (limited compatibility)';
-                }
-                
-                infoText += '. URL casting works best with the Present button!';
+                msg += 'Mobile device (iPad/Desktop recommended)';
             }
-            
-            updateStatus(infoText, 'info');
+            updateStatus(msg, 'success');
         }
         
-        // URL casting specifically for parameter mode
+        function addUrlCastingMethod() {
+            if (!deviceCapabilities.hasUrlToCast) return;
+            const url = deviceCapabilities.urlToCast;
+            setTimeout(() => startUrlCastFromParameter(url), 100);
+        }
+        
         async function startUrlCastFromParameter(urlToCast) {
             try {
-                console.log('startUrlCastFromParameter called with:', urlToCast);
                 updateStatus('🌐 Loading URL for casting...', 'info');
                 
-                // Find the container element - it's inside the main .container div
                 const mainContainer = document.querySelector('.container');
                 const statusDiv = document.getElementById('status');
                 
-                // Create URL cast container
+                if (!mainContainer || !statusDiv) {
+                    return;
+                }
+                
                 let urlContainer = document.getElementById('urlCastContainer');
+                if (urlContainer && urlContainer.parentElement.id === 'manualUrlSection') {
+                    urlContainer.remove();
+                    urlContainer = null;
+                }
+                
                 if (!urlContainer) {
                     urlContainer = document.createElement('div');
                     urlContainer.id = 'urlCastContainer';
                     urlContainer.className = 'featured-section';
+                    urlContainer.style.marginTop = '20px';
                 }
                 
-                // Check if URL is a video for better mobile casting
-                const isVideo = urlToCast.match(/\.(mp4|webm|ogg|m3u8)$/i) || 
-                               urlToCast.includes('youtube.com') || 
-                               urlToCast.includes('vimeo.com') ||
-                               urlToCast.includes('youtu.be');
+                const previewHTML = `
+                    <iframe id="castIframe" src="${urlToCast}" 
+                            style="width: 100%; height: ${deviceCapabilities.isIPad ? '500px' : '500px'}; border: none; border-radius: 15px; background: #fff; box-shadow: 0 8px 32px rgba(0,0,0,0.2); display: block;"
+                            title="URL Preview"
+                            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                            allowfullscreen
+                            allow="autoplay">
+                    </iframe>
+                `;
                 
-                // Build buttons based on device capabilities
+                // Fixed button logic - iPad gets ONLY Safari button
                 let buttonsHTML = '';
                 
-                // On mobile devices, prioritize native casting methods
-                if (deviceCapabilities.isMobile) {
-                    // iOS - Show AirPlay for videos, instructions for web pages
-                    if (deviceCapabilities.isIOS) {
-                        if (isVideo) {
-                            buttonsHTML += `
-                                <button class="overlay-button airplay" onclick="airplayUrlContent()" 
-                                        style="background: #ff9800; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(255,152,0,0.4); transition: all 0.3s ease; margin: 5px;"
-                                        onmouseover="this.style.background='#f57c00'"
-                                        onmouseout="this.style.background='#ff9800'">
-                                    📱 AirPlay Cast
-                                </button>
-                            `;
-                        }
-                        buttonsHTML += `
-                            <button class="overlay-button" onclick="openInSafari()" 
-                                    style="background: #4285f4; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(66,133,244,0.4); transition: all 0.3s ease; margin: 5px;"
-                                    onmouseover="this.style.background='#3367d6'"
-                                    onmouseout="this.style.background='#4285f4'">
-                                🌐 Open in Safari
-                            </button>
-                        `;
-                    }
-                    // Android - Show Remote Playback for videos, browser cast for web
-                    else if (deviceCapabilities.isAndroid) {
-                        if (isVideo) {
-                            buttonsHTML += `
-                                <button class="overlay-button" onclick="castWithRemotePlayback()" 
-                                        style="background: #4285f4; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(66,133,244,0.4); transition: all 0.3s ease; margin: 5px;"
-                                        onmouseover="this.style.background='#3367d6'"
-                                        onmouseout="this.style.background='#4285f4'">
-                                    📡 Cast Video
-                                </button>
-                            `;
-                        }
-                        buttonsHTML += `
-                            <button class="overlay-button" onclick="openInChrome()" 
-                                    style="background: #34a853; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(52,168,83,0.4); transition: all 0.3s ease; margin: 5px;"
-                                    onmouseover="this.style.background='#2d8e47'"
-                                    onmouseout="this.style.background='#34a853'">
-                                    📱 Open in Chrome
-                            </button>
-                        `;
-                    }
-                    // Generic mobile
-                    else {
-                        buttonsHTML += `
-                            <button class="overlay-button" onclick="openInNewTab()" 
-                                    style="background: #607d8b; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(96,125,139,0.4); transition: all 0.3s ease; margin: 5px;"
-                                    onmouseover="this.style.background='#455a64'"
-                                    onmouseout="this.style.background='#607d8b'">
-                                    🌐 Open URL
-                            </button>
-                        `;
-                    }
-                } else {
-                    // Desktop - Show Presentation API button
+                if (deviceCapabilities.isIPad) {
+                    // iPad: Only Safari button
+                    buttonsHTML = `<button onclick="openInSafari()" style="background: #4285f4; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; margin: 5px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">🌐 Open in Safari</button>`;
+                } else if (!deviceCapabilities.isMobile && !deviceCapabilities.isIPad) {
+                    // Desktop: Presentation API and other options
                     if (deviceCapabilities.hasPresentationAPI) {
-                        buttonsHTML += `
-                            <button class="overlay-button present" onclick="presentUrlContent()" 
-                                    style="background: #4caf50; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(76,175,80,0.4); transition: all 0.3s ease; margin: 5px;"
-                                    onmouseover="this.style.background='#388e3c'"
-                                    onmouseout="this.style.background='#4caf50'">
-                                📽️ Present to Display
-                            </button>
-                        `;
+                        buttonsHTML += `<button onclick="presentUrlContent()" style="background: #4caf50; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; margin: 5px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">🖽️ Present to Display</button>`;
                     }
-                    
-                    // Add AirPlay button if supported (macOS Safari)
                     if (deviceCapabilities.hasAirPlay || deviceCapabilities.isSafari) {
-                        buttonsHTML += `
-                            <button class="overlay-button airplay" onclick="airplayUrlContent()" 
-                                    style="background: #ff9800; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(255,152,0,0.4); transition: all 0.3s ease; margin: 5px;"
-                                    onmouseover="this.style.background='#f57c00'"
-                                    onmouseout="this.style.background='#ff9800'">
-                                📱 AirPlay Cast
-                            </button>
-                        `;
+                        buttonsHTML += `<button onclick="airplayUrlContent()" style="background: #ff9800; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; margin: 5px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">📱 AirPlay Cast</button>`;
                     }
-                }
-                
-                // Fallback if no buttons were added
-                if (!buttonsHTML) {
-                    buttonsHTML = `
-                        <button class="overlay-button" onclick="openInNewTab()" 
-                                style="background: #607d8b; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(96,125,139,0.4); transition: all 0.3s ease; margin: 5px;"
-                                onmouseover="this.style.background='#455a64'"
-                                onmouseout="this.style.background='#607d8b'">
-                            🌐 Open URL
-                        </button>
-                    `;
-                }
-                
-                // Create the content - use video tag for video URLs, different display for web pages
-                let previewHTML = '';
-                if (isVideo && deviceCapabilities.isMobile) {
-                    // Use video element for better mobile casting support
-                    previewHTML = `
-                        <video id="castVideo" 
-                               src="${urlToCast}" 
-                               controls 
-                               playsinline
-                               crossorigin="anonymous"
-                               style="width: 100%; max-height: 500px; border-radius: 15px; background: #000; box-shadow: 0 8px 32px rgba(0,0,0,0.2); display: block;"
-                               title="Video Preview">
-                            Your browser doesn't support video playback.
-                        </video>
-                    `;
-                } else if (deviceCapabilities.isMobile) {
-                    // For mobile web pages, show URL card
-                    previewHTML = `
-                        <div style="min-height: 400px; padding: 60px 40px; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%); border-radius: 15px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
-                            <div style="font-size: 64px; margin-bottom: 30px;">🌐</div>
-                            <p style="font-size: 16px; margin-bottom: 30px; word-break: break-all; max-width: 90%; line-height: 1.6; color: white; font-weight: 500;">
-                                ${urlToCast}
-                            </p>
-                            <p style="opacity: 0.9; font-size: 15px; color: white; background: rgba(0,0,0,0.3); padding: 15px 25px; border-radius: 10px;">
-                                👆 Tap a button above to open and cast this page
-                            </p>
-                        </div>
-                    `;
                 } else {
-                    // Desktop - use iframe for web pages
-                    previewHTML = `
-                        <iframe id="castIframe" src="${urlToCast}" 
-                                style="width: 100%; height: 500px; border: none; border-radius: 15px; background: #fff; box-shadow: 0 8px 32px rgba(0,0,0,0.2); display: block;"
-                                title="URL Preview"
-                                allowfullscreen
-                                allow="autoplay">
-                        </iframe>
-                    `;
+                    // Other mobile devices
+                    buttonsHTML = `<div style="background: rgba(255,152,0,0.2); padding: 20px; border-radius: 10px; text-align: center; color: white;"><p style="font-size: 18px; margin: 0;">📱 Mobile Device Detected</p><p style="font-size: 14px; margin: 10px 0 0 0; opacity: 0.9;">This interface is optimized for iPad and Desktop.</p></div>`;
                 }
                 
-                // Create the content
                 urlContainer.innerHTML = `
                     <div style="text-align: center;">
-                        <div class="featured-title">📽️ Ready to Cast</div>
+                        <div class="featured-title">🖽️ Cast Preview</div>
                         <p style="opacity: 0.9; margin-bottom: 20px; font-size: 1.1em;">
                             <strong>URL:</strong> ${urlToCast.length > 60 ? urlToCast.substring(0, 60) + '...' : urlToCast}
                         </p>
-                        <div style="position: relative; display: block; max-width: 100%; width: 100%; margin-bottom: 20px;">
+                        <div style="position: relative; display: block; width: 100%; margin-bottom: 20px;">
                             ${previewHTML}
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 0 auto;">
+                        <div style="display: flex; flex-direction: column; gap: 10px; max-width: 500px; margin: 0 auto; padding: 0 20px;">
                             ${buttonsHTML}
                         </div>
                     </div>
                 `;
                 
-                // Make sure it's visible
                 urlContainer.style.display = 'block';
                 urlContainer.style.visibility = 'visible';
+                urlContainer.style.opacity = '1';
                 
-                // Insert after the status div
-                if (statusDiv && statusDiv.nextSibling) {
-                    mainContainer.insertBefore(urlContainer, statusDiv.nextSibling);
-                } else if (statusDiv) {
-                    statusDiv.parentNode.appendChild(urlContainer);
+                mainContainer.appendChild(urlContainer);
+                
+                let msg = '✅ URL ready - ';
+                if (deviceCapabilities.isIPad) {
+                    msg += 'iPad (Safari casting)';
+                } else if (!deviceCapabilities.isMobile && !deviceCapabilities.isIPad) {
+                    msg += 'Desktop (Presentation options)';
                 } else {
-                    mainContainer.appendChild(urlContainer);
+                    msg += 'Mobile (iPad/Desktop recommended)';
                 }
-                
-                currentMethod = 'url-streamlined';
-                
-                // Update status message based on device and available options
-                let statusMessage = `✅ URL ready for casting`;
-                if (deviceCapabilities.isMobile) {
-                    if (deviceCapabilities.isIOS) {
-                        statusMessage += ' (Tap to ' + (isVideo ? 'AirPlay video or open in Safari' : 'open in Safari for Screen Mirroring') + ')';
-                    } else if (deviceCapabilities.isAndroid) {
-                        statusMessage += ' (Multiple casting methods available - tap buttons to choose)';
-                    } else {
-                        statusMessage += ' (Tap button to open URL)';
-                    }
-                } else {
-                    if (deviceCapabilities.hasPresentationAPI) {
-                        statusMessage += ' (Presentation API available)';
-                    }
-                }
-                updateStatus(statusMessage, 'success');
-                
-                console.log('URL cast container created. Mobile:', deviceCapabilities.isMobile, 'Video:', isVideo);
+                updateStatus(msg, 'success');
                 
             } catch (error) {
-                console.error('Error in startUrlCastFromParameter:', error);
                 updateStatus('Failed to load URL: ' + error.message, 'error');
             }
         }
         
-        // Enhanced URL Casting Method
         async function startUrlCast() {
-            let urlToCast = document.getElementById('urlInput').value.trim();
-            
-            if (!urlToCast) {
-                updateStatus('Please enter a URL to cast', 'error');
+            let url = document.getElementById('urlInput').value.trim();
+            if (!url) {
+                updateStatus('Please enter a URL', 'error');
                 return;
             }
-            
-            // Add https:// if no protocol specified
-            if (!urlToCast.startsWith('http://') && !urlToCast.startsWith('https://')) {
-                urlToCast = 'https://' + urlToCast;
-                document.getElementById('urlInput').value = urlToCast;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+                document.getElementById('urlInput').value = url;
             }
             
-            try {
-                updateStatus('🌐 Loading URL for casting...', 'info');
-                
-                const container = document.getElementById('urlCastContainer');
-                
-                // Create enhanced URL cast preview
-                container.innerHTML = `
-                    <div style="text-align: center;">
-                        <h4>🔗 URL Cast Preview</h4>
-                        <p style="opacity: 0.9; margin-bottom: 15px;">
-                            <strong>✨ Tip:</strong> The <span style="background: #4caf50; padding: 2px 8px; border-radius: 12px;">📽️ Present</span> button works best for casting!
-                        </p>
-                        <div style="position: relative; display: inline-block; max-width: 100%;">
-                            <iframe src="${urlToCast}" 
-                                    style="width: 100%; height: 400px; border: none; border-radius: 10px; background: #fff;"
-                                    title="URL Preview">
-                            </iframe>
-                            <div class="video-overlay" style="top: 15px; right: 15px;">
-                                <button class="overlay-button present" onclick="presentUrlContent()" title="Present to display (Recommended!)" 
-                                        style="background: #4caf50; font-size: 16px; padding: 12px 20px; font-weight: bold;">
-                                    📽️ Present
-                                </button>
-                                <button class="overlay-button cast" onclick="castUrlContent()" title="Cast this URL">
-                                    📱 Cast
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                container.style.display = 'block';
-                currentMethod = 'url';
-                updateStatus(`✅ URL loaded: ${urlToCast}. Click the green Present button for best results!`, 'success');
-                
-                // Show control panel
-                document.getElementById('controlPanel').style.display = 'block';
-                
-            } catch (error) {
-                updateStatus('Failed to load URL: ' + error.message, 'error');
-            }
+            window.location.href = window.location.pathname + '?cast=' + encodeURIComponent(url);
         }
         
-        // Cast URL content
-        window.castUrlContent = function() {
-            if (deviceCapabilities.isChrome || deviceCapabilities.isEdge) {
-                updateStatus('📱 Right-click the URL content and select "Cast..." to cast to your devices.', 'info');
-            } else {
-                updateStatus('URL casting works best in Chrome or Edge browsers.', 'error');
+        window.openInSafari = function() {
+            const url = deviceCapabilities.hasUrlToCast ? deviceCapabilities.urlToCast : document.getElementById('urlInput')?.value;
+            if (!url) {
+                updateStatus('❌ No URL to open', 'error');
+                return;
             }
+            window.open(url, '_blank', 'noopener,noreferrer');
+            updateStatus('📱 Opening in Safari. For casting: Use Screen Mirroring from Control Center → select Apple TV', 'info');
         };
         
-        // Present URL content
         window.presentUrlContent = async function() {
             if (!deviceCapabilities.hasPresentationAPI) {
-                updateStatus('Presentation API not supported in this browser', 'error');
+                updateStatus('Presentation API not supported', 'error');
                 return;
             }
-            
             try {
-                const urlToCast = deviceCapabilities.hasUrlToCast ? 
-                    deviceCapabilities.urlToCast : 
-                    document.getElementById('urlInput').value;
-                    
-                presentationRequest = new PresentationRequest([urlToCast]);
-                
-                updateStatus('🔍 Looking for presentation displays...', 'info');
+                const url = deviceCapabilities.hasUrlToCast ? deviceCapabilities.urlToCast : document.getElementById('urlInput').value;
+                presentationRequest = new PresentationRequest([url]);
+                updateStatus('🔍 Looking for displays...', 'info');
                 presentationConnection = await presentationRequest.start();
-                
                 presentationConnection.addEventListener('connect', () => {
-                    updateStatus('✅ URL being presented on external display!', 'success');
-                    currentMethod = 'url-presentation';
+                    updateStatus('✅ Presenting on external display!', 'success');
                 });
-                
                 presentationConnection.addEventListener('close', () => {
-                    updateStatus('URL presentation closed', 'info');
+                    updateStatus('Presentation closed', 'info');
                 });
-                
             } catch (error) {
-                updateStatus('URL presentation failed: ' + error.message, 'error');
+                updateStatus('Presentation failed: ' + error.message, 'error');
             }
         };
         
-        // AirPlay URL content
-        window.airplayUrlContent = async function() {
-            try {
-                const urlToCast = deviceCapabilities.hasUrlToCast ? 
-                    deviceCapabilities.urlToCast : 
-                    document.getElementById('urlInput').value;
-                
-                // Check if it's a video
-                const isVideo = urlToCast.match(/\.(mp4|webm|ogg|m3u8)$/i);
-                
-                // Get video element if it exists
-                const videoElement = document.getElementById('castVideo');
-                
-                if (videoElement && isVideo) {
-                    // Direct video - try AirPlay
-                    if (videoElement.webkitShowPlaybackTargetPicker) {
-                        videoElement.webkitShowPlaybackTargetPicker();
-                        updateStatus('📱 Select your AirPlay device from the picker...', 'info');
-                    } else {
-                        updateStatus('📱 Look for the AirPlay icon in the video controls', 'info');
-                    }
-                } else {
-                    // Web page - guide user
-                    updateStatus('📱 For web pages: Open the URL in Safari, then use Screen Mirroring from Control Center (swipe down from top-right → Screen Mirroring → select Apple TV)', 'info');
-                }
-                
-            } catch (error) {
-                console.error('AirPlay error:', error);
-                updateStatus('❌ AirPlay failed: ' + error.message, 'error');
-            }
+        window.airplayUrlContent = function() {
+            updateStatus('📱 For AirPlay: Look for AirPlay icon in Safari or use Screen Mirroring from Control Center', 'info');
         };
         
-        // Remote Playback API (YouTube-style casting)
-        window.castWithRemotePlayback = async function() {
-            try {
-                const videoElement = document.getElementById('castVideo');
-                
-                if (!videoElement) {
-                    updateStatus('❌ Video element not found', 'error');
-                    return;
-                }
-                
-                // Check for Remote Playback API support
-                if ('remote' in videoElement) {
-                    updateStatus('🔍 Looking for cast devices...', 'info');
-                    
-                    // Prompt user to select a device
-                    await videoElement.remote.prompt();
-                    
-                    videoElement.remote.addEventListener('connect', () => {
-                        updateStatus('✅ Connected to cast device! Playing...', 'success');
-                    });
-                    
-                    videoElement.remote.addEventListener('disconnect', () => {
-                        updateStatus('📱 Disconnected from cast device', 'info');
-                    });
-                } else {
-                    // Fallback: use Share API
-                    shareToAndroidApps();
-                }
-                
-            } catch (error) {
-                if (error.name === 'NotFoundError') {
-                    updateStatus('❌ No cast devices found. Try "Screen Mirror" button or make sure Chromecast is on same WiFi.', 'error');
-                } else if (error.name === 'AbortError') {
-                    updateStatus('Cast cancelled', 'info');
-                } else {
-                    console.error('Remote Playback error:', error);
-                    // Try alternative method
-                    shareToAndroidApps();
-                }
-            }
-        };
-        
-        // Open YouTube URLs in YouTube app
-        window.openInYouTubeApp = function() {
-            const urlToCast = deviceCapabilities.hasUrlToCast ? 
-                deviceCapabilities.urlToCast : 
-                document.getElementById('urlInput')?.value;
-            
-            console.log('Opening YouTube URL:', urlToCast);
-            
-            if (!urlToCast) {
-                updateStatus('❌ No URL to open', 'error');
-                return;
-            }
-            
-            // Extract video ID from YouTube URL
-            let videoId = '';
-            try {
-                if (urlToCast.includes('youtube.com/watch')) {
-                    videoId = new URL(urlToCast).searchParams.get('v');
-                } else if (urlToCast.includes('youtu.be/')) {
-                    videoId = urlToCast.split('youtu.be/')[1].split('?')[0];
-                } else if (urlToCast.includes('youtube.com/embed/')) {
-                    videoId = urlToCast.split('youtube.com/embed/')[1].split('?')[0];
-                }
-            } catch (e) {
-                console.error('Error parsing YouTube URL:', e);
-            }
-            
-            if (videoId) {
-                // Try to open in YouTube app
-                const youtubeAppUrl = 'vnd.youtube:' + videoId;
-                window.location.href = youtubeAppUrl;
-                
-                // Fallback to web after delay
-                setTimeout(() => {
-                    window.open(urlToCast, '_blank');
-                }, 1000);
-                
-                updateStatus('📱 Opening in YouTube app. Look for the Cast icon 📡 in the video player!', 'info');
-            } else {
-                window.open(urlToCast, '_blank');
-                updateStatus('📱 Opening YouTube. Look for Cast icon 📡 in the player', 'info');
-            }
-        };
-        
-        // Share to Android apps using Web Share API
-        window.shareToAndroidApps = async function() {
-            const urlToCast = deviceCapabilities.hasUrlToCast ? 
-                deviceCapabilities.urlToCast : 
-                document.getElementById('urlInput')?.value;
-            
-            console.log('Sharing URL:', urlToCast);
-            
-            if (!urlToCast) {
-                updateStatus('❌ No URL to share', 'error');
-                return;
-            }
-            
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'Cast this content',
-                        text: 'Open in a casting app',
-                        url: urlToCast
-                    });
-                    updateStatus('📤 Share to an app that supports casting (YouTube, Netflix, Google Home, etc.)', 'info');
-                } catch (error) {
-                    if (error.name !== 'AbortError') {
-                        console.error('Share error:', error);
-                        // Fallback to opening URL
-                        window.open(urlToCast, '_blank');
-                        updateStatus('📱 URL opened. Look for cast icons 📡 in compatible apps', 'info');
-                    }
-                }
-            } else {
-                // Share API not available, just open the URL
-                window.open(urlToCast, '_blank');
-                updateStatus('📱 URL opened. Look for cast icons 📡 in compatible apps', 'info');
-            }
-        };
-        
-        // Show Android casting options
-        window.showAndroidCastOptions = function() {
-            const instructions = `
-                📱 <strong>Android Screen Mirroring to TV:</strong><br><br>
-                
-                <strong>Method 1: Quick Settings (Recommended)</strong><br>
-                1. Swipe down from top of screen twice to open Quick Settings<br>
-                2. Look for "Cast", "Smart View", or "Screen Cast" button<br>
-                3. Tap it and select your TV/Chromecast from the list<br>
-                4. Your entire screen will mirror to the TV!<br><br>
-                
-                <strong>Method 2: Google Home App</strong><br>
-                1. Open Google Home app<br>
-                2. Tap the device you want to cast to<br>
-                3. Tap "Cast my screen" at the bottom<br>
-                4. Tap "Cast screen" to confirm<br><br>
-                
-                <strong>Method 3: Settings Menu</strong><br>
-                1. Open Settings → Connected devices<br>
-                2. Tap "Connection preferences" → "Cast"<br>
-                3. Select your TV/Chromecast<br><br>
-                
-                💡 <strong>Tips:</strong><br>
-                • Make sure phone and TV are on same WiFi<br>
-                • For YouTube/Netflix, use the 📡 Cast icon in the app<br>
-                • Screen mirroring works for ANY content on your phone!
-            `;
-            
-            updateStatus(instructions, 'info');
-        };
-        
-        // Open URL in Safari (iOS)
-        window.openInSafari = function() {
-            const urlToCast = deviceCapabilities.hasUrlToCast ? 
-                deviceCapabilities.urlToCast : 
-                document.getElementById('urlInput')?.value;
-            
-            console.log('Opening URL in Safari:', urlToCast);
-            
-            if (!urlToCast) {
-                updateStatus('❌ No URL to open', 'error');
-                return;
-            }
-            
-            // Open in new window/tab
-            const opened = window.open(urlToCast, '_blank', 'noopener,noreferrer');
-            
-            if (opened) {
-                updateStatus('📱 Opening in Safari. For videos: look for AirPlay icon 📡. For web pages: swipe down from top-right → Screen Mirroring → select Apple TV', 'info');
-            } else {
-                // If popup blocked, try different approach
-                window.location.href = urlToCast;
-            }
-        };
-        
-        // Open URL in new tab (for mobile browsers)
-        window.openInNewTab = function() {
-            const urlToCast = deviceCapabilities.hasUrlToCast ? 
-                deviceCapabilities.urlToCast : 
-                document.getElementById('urlInput')?.value;
-            
-            console.log('Opening URL in new tab:', urlToCast);
-            
-            if (!urlToCast) {
-                updateStatus('❌ No URL to open', 'error');
-                return;
-            }
-            
-            window.open(urlToCast, '_blank', 'noopener,noreferrer');
-            
-            if (deviceCapabilities.isIOS) {
-                updateStatus('📱 URL opened in Safari. Use Control Center → Screen Mirroring to cast to Apple TV', 'info');
-            } else {
-                updateStatus('📱 URL opened in new tab. Use browser menu to find casting options', 'info');
-            }
-        };
-        
-        // Open in Chrome (Android) - removed, replaced with better options
-        
-        // Show mobile casting instructions - removed, replaced with showAndroidCastOptions
-        
-        // Get current settings from UI
-        function getCurrentSettings() {
-            const resolution = document.getElementById('resolution').value;
-            const frameRate = parseInt(document.getElementById('frameRate').value);
-            const includeAudio = document.getElementById('includeAudio').checked;
-            const includeSystemAudio = document.getElementById('includeSystemAudio').checked;
-            
-            let width, height;
-            switch (resolution) {
-                case '720p': width = 1280; height = 720; break;
-                case '1080p': width = 1920; height = 1080; break;
-                case '1440p': width = 2560; height = 1440; break;
-                case 'custom':
-                    width = parseInt(document.getElementById('customWidth').value);
-                    height = parseInt(document.getElementById('customHeight').value);
-                    break;
-                default: width = 1920; height = 1080;
-            }
-            
-            return { width, height, frameRate, includeAudio, includeSystemAudio };
-        }
-        
-        // Build media constraints - always show full picker
-        function buildMediaConstraints(settings) {
-            const constraints = {
-                video: {
-                    width: { ideal: settings.width, max: settings.width },
-                    height: { ideal: settings.height, max: settings.height },
-                    frameRate: { ideal: settings.frameRate, max: settings.frameRate },
-                    // Always allow all display surfaces - let user choose
-                    displaySurface: ['monitor', 'window', 'browser']
-                }
-            };
-            
-            if (settings.includeAudio) {
-                if (settings.includeSystemAudio) {
-                    constraints.audio = {
-                        echoCancellation: false,
-                        noiseSuppression: false,
-                        sampleRate: 48000
-                    };
-                } else {
-                    constraints.audio = true;
-                }
-            }
-            
-            return constraints;
-        }
-        
-        // Enhanced capture screen with overlay controls
-        async function captureScreen(forceNewCapture = false) {
-            // If we already have a stream and not forcing new capture, use existing
-            if (mediaStream && !forceNewCapture) {
-                return mediaStream;
-            }
-            
-            // Stop existing stream if forcing new capture
-            if (mediaStream && forceNewCapture) {
-                mediaStream.getTracks().forEach(track => track.stop());
-                mediaStream = null;
-            }
-            
-            const settings = getCurrentSettings();
-            const constraints = buildMediaConstraints(settings);
-            
-            updateStatus('📺 Choose your screen, window, or tab to share...', 'info');
-            
-            try {
-                // Always use getDisplayMedia without displaySurface constraint
-                // This ensures the full picker is shown every time
-                const baseConstraints = {
-                    video: {
-                        width: { ideal: settings.width, max: settings.width },
-                        height: { ideal: settings.height, max: settings.height },
-                        frameRate: { ideal: settings.frameRate, max: settings.frameRate }
-                        // No displaySurface constraint - shows all options
-                    }
-                };
-                
-                if (settings.includeAudio) {
-                    if (settings.includeSystemAudio) {
-                        baseConstraints.audio = {
-                            echoCancellation: false,
-                            noiseSuppression: false,
-                            sampleRate: 48000
-                        };
-                    } else {
-                        baseConstraints.audio = true;
-                    }
-                }
-                
-                mediaStream = await navigator.mediaDevices.getDisplayMedia(baseConstraints);
-                
-                // Detect what the user actually selected
-                const videoTrack = mediaStream.getVideoTracks()[0];
-                const trackSettings = videoTrack.getSettings();
-                let sourceInfo = 'Unknown source';
-                
-                if (trackSettings.displaySurface) {
-                    switch (trackSettings.displaySurface) {
-                        case 'monitor':
-                            sourceInfo = '🖥️ Entire Screen';
-                            break;
-                        case 'window':
-                            sourceInfo = '🪟 Application Window';
-                            break;
-                        case 'browser':
-                            sourceInfo = '🌐 Browser Tab';
-                            break;
-                    }
-                } else {
-                    // Fallback detection based on dimensions
-                    if (trackSettings.width >= 1920) {
-                        sourceInfo = '🖥️ Screen/Large Window';
-                    } else if (trackSettings.width >= 1280) {
-                        sourceInfo = '🪟 Window';
-                    } else {
-                        sourceInfo = '🌐 Tab/Small Window';
-                    }
-                }
-                
-                updateStatus(`✅ Capturing: ${sourceInfo} (${trackSettings.width}x${trackSettings.height})`, 'success');
-                
-                // Show preview with overlay controls
-                const video = document.getElementById('previewVideo');
-                video.srcObject = mediaStream;
-                video.play();
-                document.getElementById('videoPreview').style.display = 'block';
-                document.getElementById('controlPanel').style.display = 'block';
-                
-                // Make sure overlay is visible
-                document.getElementById('videoOverlay').style.display = 'flex';
-                
-                // Handle stream end
-                videoTrack.addEventListener('ended', () => {
-                    updateStatus('Screen capture ended by user', 'info');
-                    stopStream();
-                });
-                
-                return mediaStream;
-            } catch (error) {
-                handleCaptureError(error);
-                return null;
-            }
-        }
-        
-        // Handle capture errors
-        function handleCaptureError(error) {
-            let errorMessage = 'Error: ';
-            if (error.name === 'NotAllowedError') {
-                errorMessage += 'Permission denied. Please allow screen sharing.';
-            } else if (error.name === 'NotSupportedError') {
-                errorMessage += 'Screen sharing not supported in this browser.';
-            } else if (error.name === 'AbortError') {
-                errorMessage += 'Screen sharing cancelled by user.';
-            } else {
-                errorMessage += error.message;
-            }
-            updateStatus(errorMessage, 'error');
-        }
-        
-        // Update status display
         function updateStatus(message, type = 'info') {
             const statusDiv = document.getElementById('status');
             statusDiv.textContent = message;
             statusDiv.className = `status ${type}`;
         }
         
-        // Initialize UI controls
-        function initializeControls() {
-            // Resolution selector
-            document.getElementById('resolution').addEventListener('change', (e) => {
-                const customDiv = document.getElementById('customResolution');
-                customDiv.style.display = e.target.value === 'custom' ? 'block' : 'none';
-            });
-            
-            // Frame rate slider
-            document.getElementById('frameRate').addEventListener('input', (e) => {
-                document.getElementById('frameRateValue').textContent = e.target.value + ' fps';
-            });
-            
-            // System audio warning
-            document.getElementById('includeSystemAudio').addEventListener('change', (e) => {
-                if (e.target.checked) {
-                    updateStatus('System audio requires Chrome 105+ and may need additional permissions', 'info');
-                }
-            });
-            
-            // Check AirPlay support for both regular and floating buttons
-            if (window.WebKitPlaybackTargetAvailabilityEvent) {
-                document.getElementById('airplayButton').disabled = false;
-                // Enable floating AirPlay button too
-                document.getElementById('floatingAirplayButton').disabled = false;
-            } else {
-                document.getElementById('floatingAirplayButton').disabled = true;
-            }
-        }
-        
-        // Event listeners - updated for new structure
         document.addEventListener('DOMContentLoaded', () => {
-            // Check if this is a presentation display
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('display') !== 'true') {
                 initializeApp();
-                initializeControls();
-                
-                // URL input event listeners
-                document.getElementById('urlCastButton').addEventListener('click', startUrlCast);
-                
-                // Allow Enter key in URL input
-                document.getElementById('urlInput').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        startUrlCast();
-                    }
-                });
-            }
-        });
-        
-        // Handle page unload
-        window.addEventListener('beforeunload', () => {
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
             }
         });
     </script>
