@@ -379,7 +379,7 @@
         </div>
         
         <!-- Featured URL Casting Section -->
-        <div class="featured-section">
+        <div class="featured-section" id="manualUrlSection">
             <div class="featured-title">🌐 Featured: URL Casting</div>
             <p style="text-align: center; opacity: 0.9; margin-bottom: 20px;">
                 Cast any website directly to your display. Works best with the Present button!
@@ -558,7 +558,7 @@
         </div>
         
         <div style="text-align: center; opacity: 0.6; font-size: 0.8em; margin-top: 20px;">
-            Version 2.4-PREVIEW - Show Actual Website Content (2025-01-16)
+            Version 2.5-ANDROID-FIX - Proper Streamlined Interface (2025-01-16)
         </div>
     </div>
 
@@ -658,14 +658,17 @@
             debugAdd('🎨 initializeStreamlinedInterface() called');
             
             // Hide elements we don't need when casting via URL parameter
+            const manualUrlSection = document.getElementById('manualUrlSection');
             const otherMethods = document.querySelector('.other-methods');
             const floatingControls = document.getElementById('floatingControls');
             const videoPreview = document.getElementById('videoPreview');
             const settingsPanel = document.getElementById('settingsPanel');
             
-            // DON'T hide the featured section - keep it visible for preview
-            // const featuredSection = document.querySelector('.featured-section');
-            // if (featuredSection) featuredSection.style.display = 'none';
+            // HIDE the manual URL input section (not needed in parameter mode)
+            if (manualUrlSection) {
+                manualUrlSection.style.display = 'none';
+                debugAdd('✅ Hidden manual URL input section');
+            }
             
             // Hide other methods completely
             if (otherMethods) {
@@ -738,6 +741,8 @@
                 controlPanel.style.display = 'block';
                 debugAdd('✅ Showing control panel');
             }
+            
+            debugAdd('✅ Streamlined interface setup complete');
         }
         
         // Full interface for manual use
