@@ -778,6 +778,16 @@
             
             const urlToCast = deviceCapabilities.urlToCast;
             
+            console.log('=== URL Casting Mode ===');
+            console.log('Cast URL detected:', urlToCast);
+            console.log('Device type:', {
+                isMobile: deviceCapabilities.isMobile,
+                isIOS: deviceCapabilities.isIOS,
+                isAndroid: deviceCapabilities.isAndroid,
+                isSafari: deviceCapabilities.isSafari,
+                isChrome: deviceCapabilities.isChrome
+            });
+            
             // For streamlined interface, directly load the URL
             console.log('Loading URL for casting:', urlToCast);
             setTimeout(() => {
@@ -952,7 +962,7 @@
                     `;
                 }
                 
-                // Create the content - use video tag for video URLs, iframe for web pages
+                // Create the content - use video tag for video URLs, different display for web pages
                 let previewHTML = '';
                 if (isVideo && deviceCapabilities.isMobile) {
                     // Use video element for better mobile casting support
@@ -962,21 +972,21 @@
                                controls 
                                playsinline
                                crossorigin="anonymous"
-                               style="width: 100%; max-height: 500px; border-radius: 15px; background: #000; box-shadow: 0 8px 32px rgba(0,0,0,0.2);"
+                               style="width: 100%; max-height: 500px; border-radius: 15px; background: #000; box-shadow: 0 8px 32px rgba(0,0,0,0.2); display: block;"
                                title="Video Preview">
                             Your browser doesn't support video playback.
                         </video>
                     `;
                 } else if (deviceCapabilities.isMobile) {
-                    // For mobile web pages, show URL link instead of iframe
+                    // For mobile web pages, show URL card
                     previewHTML = `
-                        <div style="padding: 40px; background: rgba(255,255,255,0.1); border-radius: 15px; text-align: center;">
-                            <div style="font-size: 48px; margin-bottom: 20px;">🌐</div>
-                            <p style="font-size: 18px; margin-bottom: 20px; word-break: break-all;">
+                        <div style="min-height: 400px; padding: 60px 40px; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%); border-radius: 15px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
+                            <div style="font-size: 64px; margin-bottom: 30px;">🌐</div>
+                            <p style="font-size: 16px; margin-bottom: 30px; word-break: break-all; max-width: 90%; line-height: 1.6; color: white; font-weight: 500;">
                                 ${urlToCast}
                             </p>
-                            <p style="opacity: 0.8; font-size: 14px;">
-                                Tap the button below to open and cast this page
+                            <p style="opacity: 0.9; font-size: 15px; color: white; background: rgba(0,0,0,0.3); padding: 15px 25px; border-radius: 10px;">
+                                👆 Tap a button above to open and cast this page
                             </p>
                         </div>
                     `;
@@ -984,7 +994,7 @@
                     // Desktop - use iframe for web pages
                     previewHTML = `
                         <iframe id="castIframe" src="${urlToCast}" 
-                                style="width: 100%; height: 500px; border: none; border-radius: 15px; background: #fff; box-shadow: 0 8px 32px rgba(0,0,0,0.2);"
+                                style="width: 100%; height: 500px; border: none; border-radius: 15px; background: #fff; box-shadow: 0 8px 32px rgba(0,0,0,0.2); display: block;"
                                 title="URL Preview"
                                 allowfullscreen
                                 allow="autoplay">
@@ -999,11 +1009,11 @@
                         <p style="opacity: 0.9; margin-bottom: 20px; font-size: 1.1em;">
                             <strong>URL:</strong> ${urlToCast.length > 60 ? urlToCast.substring(0, 60) + '...' : urlToCast}
                         </p>
-                        <div style="position: relative; display: inline-block; max-width: 100%; width: 100%;">
+                        <div style="position: relative; display: block; max-width: 100%; width: 100%; margin-bottom: 20px;">
                             ${previewHTML}
-                            <div style="position: absolute; top: 20px; right: 20px; background: rgba(0, 0, 0, 0.8); border-radius: 10px; padding: 10px; backdrop-filter: blur(5px); display: flex; flex-direction: column; gap: 8px;">
-                                ${buttonsHTML}
-                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 0 auto;">
+                            ${buttonsHTML}
                         </div>
                     </div>
                 `;
@@ -1223,14 +1233,27 @@
         window.openInYouTubeApp = function() {
             const urlToCast = deviceCapabilities.hasUrlToCast ? 
                 deviceCapabilities.urlToCast : 
-                document.getElementById('urlInput').value;
+                document.getElementById('urlInput')?.value;
+            
+            console.log('Opening YouTube URL:', urlToCast);
+            
+            if (!urlToCast) {
+                updateStatus('❌ No URL to open', 'error');
+                return;
+            }
             
             // Extract video ID from YouTube URL
             let videoId = '';
-            if (urlToCast.includes('youtube.com/watch')) {
-                videoId = new URL(urlToCast).searchParams.get('v');
-            } else if (urlToCast.includes('youtu.be/')) {
-                videoId = urlToCast.split('youtu.be/')[1].split('?')[0];
+            try {
+                if (urlToCast.includes('youtube.com/watch')) {
+                    videoId = new URL(urlToCast).searchParams.get('v');
+                } else if (urlToCast.includes('youtu.be/')) {
+                    videoId = urlToCast.split('youtu.be/')[1].split('?')[0];
+                } else if (urlToCast.includes('youtube.com/embed/')) {
+                    videoId = urlToCast.split('youtube.com/embed/')[1].split('?')[0];
+                }
+            } catch (e) {
+                console.error('Error parsing YouTube URL:', e);
             }
             
             if (videoId) {
@@ -1254,7 +1277,14 @@
         window.shareToAndroidApps = async function() {
             const urlToCast = deviceCapabilities.hasUrlToCast ? 
                 deviceCapabilities.urlToCast : 
-                document.getElementById('urlInput').value;
+                document.getElementById('urlInput')?.value;
+            
+            console.log('Sharing URL:', urlToCast);
+            
+            if (!urlToCast) {
+                updateStatus('❌ No URL to share', 'error');
+                return;
+            }
             
             if (navigator.share) {
                 try {
@@ -1314,20 +1344,40 @@
         window.openInSafari = function() {
             const urlToCast = deviceCapabilities.hasUrlToCast ? 
                 deviceCapabilities.urlToCast : 
-                document.getElementById('urlInput').value;
+                document.getElementById('urlInput')?.value;
             
-            window.open(urlToCast, '_blank');
+            console.log('Opening URL in Safari:', urlToCast);
             
-            updateStatus('📱 Opening in Safari. For videos: look for AirPlay icon. For web pages: swipe down from top-right → Screen Mirroring → select Apple TV', 'info');
+            if (!urlToCast) {
+                updateStatus('❌ No URL to open', 'error');
+                return;
+            }
+            
+            // Open in new window/tab
+            const opened = window.open(urlToCast, '_blank', 'noopener,noreferrer');
+            
+            if (opened) {
+                updateStatus('📱 Opening in Safari. For videos: look for AirPlay icon 📡. For web pages: swipe down from top-right → Screen Mirroring → select Apple TV', 'info');
+            } else {
+                // If popup blocked, try different approach
+                window.location.href = urlToCast;
+            }
         };
         
         // Open URL in new tab (for mobile browsers)
         window.openInNewTab = function() {
             const urlToCast = deviceCapabilities.hasUrlToCast ? 
                 deviceCapabilities.urlToCast : 
-                document.getElementById('urlInput').value;
+                document.getElementById('urlInput')?.value;
             
-            window.open(urlToCast, '_blank');
+            console.log('Opening URL in new tab:', urlToCast);
+            
+            if (!urlToCast) {
+                updateStatus('❌ No URL to open', 'error');
+                return;
+            }
+            
+            window.open(urlToCast, '_blank', 'noopener,noreferrer');
             
             if (deviceCapabilities.isIOS) {
                 updateStatus('📱 URL opened in Safari. Use Control Center → Screen Mirroring to cast to Apple TV', 'info');
