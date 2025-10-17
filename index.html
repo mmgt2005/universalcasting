@@ -646,11 +646,13 @@
                 
                 if (deviceCapabilities.isMobile) {
                     if (deviceCapabilities.isIOS) {
-                        featuresHTML += '• <strong>iOS Device:</strong> AirPlay casting for videos, Screen Mirroring for web pages<br>';
-                        featuresHTML += '• <strong>Native Integration:</strong> Use Control Center for quick access<br>';
+                        featuresHTML += '• <strong>iOS Device:</strong> AirPlay casting for videos, Safari for web pages<br>';
+                        featuresHTML += '• <strong>Screen Mirroring:</strong> Use Control Center for full screen casting<br>';
                     } else if (deviceCapabilities.isAndroid) {
-                        featuresHTML += '• <strong>Android Device:</strong> Remote Playback API for videos, Chrome casting for web<br>';
-                        featuresHTML += '• <strong>Chromecast:</strong> Use Chrome menu (⋮) → Cast for web pages<br>';
+                        featuresHTML += '• <strong>Android Device:</strong> Multiple casting methods available<br>';
+                        featuresHTML += '• <strong>Quick Cast:</strong> Use Quick Settings screen mirroring (easiest!)<br>';
+                        featuresHTML += '• <strong>YouTube URLs:</strong> Open directly in YouTube app for cast icon<br>';
+                        featuresHTML += '• <strong>Share API:</strong> Share to any casting-compatible app<br>';
                     } else {
                         featuresHTML += '• <strong>Mobile Device:</strong> Browser-based casting available<br>';
                         featuresHTML += '• <strong>Screen Mirroring:</strong> Check device settings for wireless display<br>';
@@ -870,16 +872,15 @@
                                     📱 AirPlay Cast
                                 </button>
                             `;
-                        } else {
-                            buttonsHTML += `
-                                <button class="overlay-button" onclick="openInNewTab()" 
-                                        style="background: #4285f4; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(66,133,244,0.4); transition: all 0.3s ease; margin: 5px;"
-                                        onmouseover="this.style.background='#3367d6'"
-                                        onmouseout="this.style.background='#4285f4'">
-                                    🌐 Open in Safari
-                                </button>
-                            `;
                         }
+                        buttonsHTML += `
+                            <button class="overlay-button" onclick="openInSafari()" 
+                                    style="background: #4285f4; color: white; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 18px; font-weight: bold; box-shadow: 0 4px 20px rgba(66,133,244,0.4); transition: all 0.3s ease; margin: 5px;"
+                                    onmouseover="this.style.background='#3367d6'"
+                                    onmouseout="this.style.background='#4285f4'">
+                                🌐 Open in Safari
+                            </button>
+                        `;
                     }
                     // Android - Show Remote Playback for videos, browser cast for web
                     else if (deviceCapabilities.isAndroid) {
@@ -960,13 +961,27 @@
                                src="${urlToCast}" 
                                controls 
                                playsinline
-                               style="width: 100%; height: 500px; border-radius: 15px; background: #000; box-shadow: 0 8px 32px rgba(0,0,0,0.2);"
+                               crossorigin="anonymous"
+                               style="width: 100%; max-height: 500px; border-radius: 15px; background: #000; box-shadow: 0 8px 32px rgba(0,0,0,0.2);"
                                title="Video Preview">
                             Your browser doesn't support video playback.
                         </video>
                     `;
+                } else if (deviceCapabilities.isMobile) {
+                    // For mobile web pages, show URL link instead of iframe
+                    previewHTML = `
+                        <div style="padding: 40px; background: rgba(255,255,255,0.1); border-radius: 15px; text-align: center;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">🌐</div>
+                            <p style="font-size: 18px; margin-bottom: 20px; word-break: break-all;">
+                                ${urlToCast}
+                            </p>
+                            <p style="opacity: 0.8; font-size: 14px;">
+                                Tap the button below to open and cast this page
+                            </p>
+                        </div>
+                    `;
                 } else {
-                    // Use iframe for web pages
+                    // Desktop - use iframe for web pages
                     previewHTML = `
                         <iframe id="castIframe" src="${urlToCast}" 
                                 style="width: 100%; height: 500px; border: none; border-radius: 15px; background: #fff; box-shadow: 0 8px 32px rgba(0,0,0,0.2);"
@@ -1012,9 +1027,9 @@
                 let statusMessage = `✅ URL ready for casting`;
                 if (deviceCapabilities.isMobile) {
                     if (deviceCapabilities.isIOS) {
-                        statusMessage += ' (Tap button to ' + (isVideo ? 'use AirPlay' : 'open in Safari for AirPlay') + ')';
+                        statusMessage += ' (Tap to ' + (isVideo ? 'AirPlay video or open in Safari' : 'open in Safari for Screen Mirroring') + ')';
                     } else if (deviceCapabilities.isAndroid) {
-                        statusMessage += ' (Tap button to cast or open in Chrome menu)';
+                        statusMessage += ' (Multiple casting methods available - tap buttons to choose)';
                     } else {
                         statusMessage += ' (Tap button to open URL)';
                     }
@@ -1187,20 +1202,123 @@
                         updateStatus('📱 Disconnected from cast device', 'info');
                     });
                 } else {
-                    // Fallback: open in Chrome to use native casting
-                    openInChrome();
+                    // Fallback: use Share API
+                    shareToAndroidApps();
                 }
                 
             } catch (error) {
                 if (error.name === 'NotFoundError') {
-                    updateStatus('❌ No cast devices found. Make sure Chromecast is on the same WiFi network.', 'error');
+                    updateStatus('❌ No cast devices found. Try "Screen Mirror" button or make sure Chromecast is on same WiFi.', 'error');
                 } else if (error.name === 'AbortError') {
                     updateStatus('Cast cancelled', 'info');
                 } else {
                     console.error('Remote Playback error:', error);
-                    updateStatus('❌ Cast failed: ' + error.message, 'error');
+                    // Try alternative method
+                    shareToAndroidApps();
                 }
             }
+        };
+        
+        // Open YouTube URLs in YouTube app
+        window.openInYouTubeApp = function() {
+            const urlToCast = deviceCapabilities.hasUrlToCast ? 
+                deviceCapabilities.urlToCast : 
+                document.getElementById('urlInput').value;
+            
+            // Extract video ID from YouTube URL
+            let videoId = '';
+            if (urlToCast.includes('youtube.com/watch')) {
+                videoId = new URL(urlToCast).searchParams.get('v');
+            } else if (urlToCast.includes('youtu.be/')) {
+                videoId = urlToCast.split('youtu.be/')[1].split('?')[0];
+            }
+            
+            if (videoId) {
+                // Try to open in YouTube app
+                const youtubeAppUrl = 'vnd.youtube:' + videoId;
+                window.location.href = youtubeAppUrl;
+                
+                // Fallback to web after delay
+                setTimeout(() => {
+                    window.open(urlToCast, '_blank');
+                }, 1000);
+                
+                updateStatus('📱 Opening in YouTube app. Look for the Cast icon 📡 in the video player!', 'info');
+            } else {
+                window.open(urlToCast, '_blank');
+                updateStatus('📱 Opening YouTube. Look for Cast icon 📡 in the player', 'info');
+            }
+        };
+        
+        // Share to Android apps using Web Share API
+        window.shareToAndroidApps = async function() {
+            const urlToCast = deviceCapabilities.hasUrlToCast ? 
+                deviceCapabilities.urlToCast : 
+                document.getElementById('urlInput').value;
+            
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Cast this content',
+                        text: 'Open in a casting app',
+                        url: urlToCast
+                    });
+                    updateStatus('📤 Share to an app that supports casting (YouTube, Netflix, Google Home, etc.)', 'info');
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        console.error('Share error:', error);
+                        // Fallback to opening URL
+                        window.open(urlToCast, '_blank');
+                        updateStatus('📱 URL opened. Look for cast icons 📡 in compatible apps', 'info');
+                    }
+                }
+            } else {
+                // Share API not available, just open the URL
+                window.open(urlToCast, '_blank');
+                updateStatus('📱 URL opened. Look for cast icons 📡 in compatible apps', 'info');
+            }
+        };
+        
+        // Show Android casting options
+        window.showAndroidCastOptions = function() {
+            const instructions = `
+                📱 <strong>Android Screen Mirroring to TV:</strong><br><br>
+                
+                <strong>Method 1: Quick Settings (Recommended)</strong><br>
+                1. Swipe down from top of screen twice to open Quick Settings<br>
+                2. Look for "Cast", "Smart View", or "Screen Cast" button<br>
+                3. Tap it and select your TV/Chromecast from the list<br>
+                4. Your entire screen will mirror to the TV!<br><br>
+                
+                <strong>Method 2: Google Home App</strong><br>
+                1. Open Google Home app<br>
+                2. Tap the device you want to cast to<br>
+                3. Tap "Cast my screen" at the bottom<br>
+                4. Tap "Cast screen" to confirm<br><br>
+                
+                <strong>Method 3: Settings Menu</strong><br>
+                1. Open Settings → Connected devices<br>
+                2. Tap "Connection preferences" → "Cast"<br>
+                3. Select your TV/Chromecast<br><br>
+                
+                💡 <strong>Tips:</strong><br>
+                • Make sure phone and TV are on same WiFi<br>
+                • For YouTube/Netflix, use the 📡 Cast icon in the app<br>
+                • Screen mirroring works for ANY content on your phone!
+            `;
+            
+            updateStatus(instructions, 'info');
+        };
+        
+        // Open URL in Safari (iOS)
+        window.openInSafari = function() {
+            const urlToCast = deviceCapabilities.hasUrlToCast ? 
+                deviceCapabilities.urlToCast : 
+                document.getElementById('urlInput').value;
+            
+            window.open(urlToCast, '_blank');
+            
+            updateStatus('📱 Opening in Safari. For videos: look for AirPlay icon. For web pages: swipe down from top-right → Screen Mirroring → select Apple TV', 'info');
         };
         
         // Open URL in new tab (for mobile browsers)
@@ -1218,59 +1336,9 @@
             }
         };
         
-        // Open in Chrome (Android)
-        window.openInChrome = function() {
-            const urlToCast = deviceCapabilities.hasUrlToCast ? 
-                deviceCapabilities.urlToCast : 
-                document.getElementById('urlInput').value;
-            
-            // Try to open in Chrome
-            const chromeIntent = 'googlechrome://navigate?url=' + encodeURIComponent(urlToCast);
-            window.location.href = chromeIntent;
-            
-            // Fallback to regular open
-            setTimeout(() => {
-                window.open(urlToCast, '_blank');
-            }, 500);
-            
-            updateStatus('📱 Opening in Chrome. Tap the menu (⋮) → Cast to start casting', 'info');
-        };
+        // Open in Chrome (Android) - removed, replaced with better options
         
-        // Show mobile casting instructions (removed duplicate content)
-        window.showMobileCastInstructions = function() {
-            let instructions = '';
-            
-            if (deviceCapabilities.isAndroid) {
-                instructions = `
-                    📱 <strong>Android Casting Instructions:</strong><br><br>
-                    1. <strong>Chrome Browser:</strong> Tap the ⋮ menu → "Cast..." to send to Chromecast or compatible TV<br>
-                    2. <strong>YouTube/Netflix:</strong> Look for the Cast icon 📡 in the app<br>
-                    3. <strong>Screen Mirroring:</strong> Use Android's "Cast Screen" in Quick Settings<br>
-                    4. <strong>Google Home App:</strong> Cast to Google Cast devices<br><br>
-                    💡 Make sure your phone and TV/Chromecast are on the same WiFi network!
-                `;
-            } else if (deviceCapabilities.isIOS) {
-                instructions = `
-                    📱 <strong>iOS Casting Instructions:</strong><br><br>
-                    1. <strong>AirPlay:</strong> Swipe down from top-right → tap Screen Mirroring → select Apple TV<br>
-                    2. <strong>Safari:</strong> Tap the AirPlay icon when watching videos<br>
-                    3. <strong>Apps:</strong> Look for the AirPlay icon 📡 in YouTube, Netflix, etc.<br>
-                    4. <strong>Control Center:</strong> Quick access to AirPlay devices<br><br>
-                    💡 Make sure your iPhone and Apple TV are on the same WiFi network!
-                `;
-            } else {
-                instructions = `
-                    📱 <strong>Mobile Casting Options:</strong><br><br>
-                    • <strong>Browser Menu:</strong> Look for "Cast" option in your mobile browser menu<br>
-                    • <strong>Screen Mirroring:</strong> Check your phone's settings for wireless display options<br>
-                    • <strong>App-Specific:</strong> Many video apps have built-in casting (look for 📡 icon)<br>
-                    • <strong>Third-Party Apps:</strong> Consider apps like AllCast, LocalCast, or BubbleUPnP<br><br>
-                    💡 Ensure your device and TV are on the same network!
-                `;
-            }
-            
-            updateStatus(instructions, 'info');
-        };
+        // Show mobile casting instructions - removed, replaced with showAndroidCastOptions
         
         // Get current settings from UI
         function getCurrentSettings() {
