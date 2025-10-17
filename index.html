@@ -550,6 +550,10 @@
             • <strong>Device Optimization:</strong> Interface adapts to your browser's capabilities<br>
             • <strong>HTTPS/Localhost:</strong> Screen capture requires secure connection for security
         </div>
+        
+        <div style="text-align: center; opacity: 0.6; font-size: 0.8em; margin-top: 20px;">
+            Version 2.1 - Updated Mobile Casting
+        </div>
     </div>
 
     <script>
@@ -564,6 +568,10 @@
         // Detect device and browser capabilities
         function detectDeviceCapabilities() {
             const ua = navigator.userAgent;
+            
+            console.log('=== Device Detection ===');
+            console.log('User Agent:', ua);
+            
             const capabilities = {
                 // Browser detection
                 isChrome: /Chrome/.test(ua) && !/Edge/.test(ua),
@@ -574,7 +582,7 @@
                 // Device detection
                 isMobile: /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua),
                 isIOS: /iPhone|iPad|iPod/.test(ua),
-                isAndroid: /Android/.test(ua),
+                isAndroid: /Android/i.test(ua),
                 isMac: /Mac/.test(ua),
                 isWindows: /Windows/.test(ua),
                 
@@ -593,6 +601,8 @@
                 hasUrlToCast: new URLSearchParams(window.location.search).has('cast'),
                 urlToCast: new URLSearchParams(window.location.search).get('cast')
             };
+            
+            console.log('Detected capabilities:', capabilities);
             
             return capabilities;
         }
